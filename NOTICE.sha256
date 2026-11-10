@@ -1,7 +1,7 @@
 卜易 · buyi　内容清单（SHA-256）
 项目：https://github.com/chengyi-mountain/buyi
-生成时间：2026-11-10 17:18:50 +0800
-对应提交：02312a42b24063886e7882321136533f257c104c
+生成时间：2026-11-10 17:25:08 +0800
+对应提交：4f51099514bc4d5a409a7e1e706aa9f1bc7a53f2
 文件数：86
 
 校验方法：sha256sum -c NOTICE.sha256（Linux/macOS）；
@@ -86,7 +86,7 @@ b33533a586e6b8aafbdaf5547d6489984ba39f19e98a607844a769e1cf6d75e2  data/notes_06.
 8571de2bbc356176495d054eef0d80f819736ccdd0edd9b424fc82984f730d0d  data/notes_07.json
 d9fc0a94f58ceb9c01fcd3d94236d16ad88af3560a0be2976072f7b4433b9466  data/notes_08.json
 0837b010783a5c94765af96fcd6682f68d56b9f6faf71dffbf5956e8dd06b37f  data/notes_09.json
-294e3bded1ce34db79efd136962e59e7dab536aae4ab32ffa3a1950684d598bd  index.html
+dc84fb174abfc898b616992d77912420996d2bc3cca25f6e813938db5d5d7fdb  index.html
 97ca217382b7cf79fb63e9abed0d5934ed18e440818db7931f54542b6e844b4a  tools/build.py
 a747b44a135b21c7d8dcde6347553ece83ebed6c1d47cc1944b6c36cfb885c96  tools/fetch_text.py
 83effe096934b5c053bddec3e9bd14227d7a40128e5aac02458428a160033c73  tools/inspect_pdf.py
