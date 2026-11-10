@@ -129,6 +129,7 @@ https://你的用户名.github.io/buyi/
 python tools\build.py            # 改完 notes_*.json 后，把文字灌进页面
 python tools\fetch_text.py       # 重抓《周易》经文
 python tools\make_manifest.py    # 重算 NOTICE.sha256
+python tools\shrink_images.py 800   # 把图解缩到 800px 宽，原图自动备份到 buyi-原图备份
 python tools\inspect_pdf.py 某.pdf   # 看 PDF 有多少页、每页几张图
 python tools\split_book.py 某.pdf assets\renjiandao --mode full --dpi 150
 ```

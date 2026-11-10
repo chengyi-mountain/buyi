@@ -32,6 +32,7 @@ GitHub 上的仓库是唯一权威副本，本地那份只是工作副本。原�
 | `tools/build.py` | 合并 `64gua.json` + `notes_*.json`，整段替换 `index.html` 里的 `const YI` | `python tools/build.py` |
 | `tools/split_book.py` | 把讲义 PDF 拆成 `001.jpg`～`064.jpg` | `python tools/split_book.py <pdf> assets/renjiandao --mode full --dpi 150` |
 | `tools/inspect_pdf.py` | 检查 PDF 页数、每页图片对象 | `python tools/inspect_pdf.py <pdf>` |
+| `tools/shrink_images.py` | 把图解批量缩到指定宽度（默认 800px），原图自动备份到仓库外 `buyi-原图备份/` | `python tools/shrink_images.py 800` |
 | `tools/make_manifest.py` | 重算内容哈希清单 `NOTICE.sha256` | `python tools/make_manifest.py` |
 
 拆页说明：`--mode full` 导整页（含卦名与「卦圖象解」），`--mode crop` 只裁画作区，但各页画幅不一致时会切坏，默认用 `full`。

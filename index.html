@@ -212,6 +212,11 @@ body::before{
   .cell{min-height:88px;padding:9px 2px 7px}
   .cell .cell-name{font-size:12px}
 }
+/* 窄屏：整页图解限高，别把按钮挤到两屏以外；想看细节点图开原尺寸 */
+@media (max-width:768px){
+  .fig-frame img{width:auto;max-width:100%;max-height:56vh;margin:0 auto}
+  .fig-frame{max-width:min(100%,420px)}
+}
 .hex-img .hexsvg{width:min(60vw,200px);height:auto}
 .tu-hex .hexsvg{width:min(54vw,180px);height:auto}
 .full-left .hexsvg{width:min(56vw,170px);height:auto}
@@ -938,11 +943,21 @@ function step(delta){
   render();
 }
 
+/* 每日一卦：同一天固定同一卦（按东八区日期算），跨天自动换 */
+function dailyHex(){
+  const now = new Date();
+  now.setMinutes(now.getMinutes() + now.getTimezoneOffset() - 480);
+  const key = now.getFullYear() + '-' + (now.getMonth() + 1) + '-' + now.getDate();
+  let h = 0;
+  for (let i = 0; i < key.length; i++) h = (h * 31 + key.charCodeAt(i)) % 100003;
+  return h % 64 + 1;
+}
+
 /* 每日一卦：三秒抽动 */
 function dailyRoll(){
   if (state.rolling) return;
   state.rolling = true;
-  const target = 1 + Math.floor(Math.random() * 64);
+  const target = dailyHex();
   const img = el('hexImg'), name = el('hexName'), sub = el('hexSub');
   img.classList.add('rolling');
   name.style.opacity = '.55';
