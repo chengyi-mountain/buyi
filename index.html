@@ -159,6 +159,18 @@ body::before{
 .yao-card p{margin:0 0 3px;font-size:13.5px;line-height:1.95;color:var(--ink-2)}
 .yao-card p b{display:inline-block;min-width:4.6em;margin-right:4px;font-weight:400;
   font-size:12.5px;color:var(--cinnabar);letter-spacing:.06em}
+/* 起卦区 */
+.cast-box{margin:0 0 12px}
+.cast-row{display:flex;justify-content:space-between;align-items:baseline;
+  font-size:13px;line-height:2.1;color:var(--ink-2);border-bottom:1px dashed var(--line)}
+.cast-row.on{color:var(--cinnabar)}
+.cast-sum{margin:9px 0 0;font-size:13.5px;line-height:1.9;color:var(--ink-2)}
+.cast-sum b{font-weight:400;color:var(--ink)}
+/* 弹窗里的逐爻卡 */
+.result .yao-q{margin:2px 0}
+.result .yao-q b{display:inline-block;min-width:5.6em;font-weight:400;
+  font-size:12.5px;color:var(--cinnabar);letter-spacing:.06em}
+.result .yao-q-src{margin:0 0 5px;font-size:13px;line-height:1.9;color:var(--ink-3)}
 /* ===== 弹窗 ===== */
 .modal{position:fixed;inset:0;z-index:60;display:flex;align-items:center;justify-content:center;padding:16px}
 .modal[hidden]{display:none}
@@ -387,7 +399,14 @@ body::before{
   <div class="modal-mask" data-act="close"></div>
   <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="dmTitle">
     <h3 id="dmTitle">解卦</h3>
-    <p class="modal-hint">可写下所问之事；不写，则只解卦辞爻辞。</p>
+    <p class="modal-hint" id="dmGuaHint">先起卦：三枚铜钱，一摇一爻，共六次，自下而上。摇出的卦才定得了“你现在在第几爻”。</p>
+    <div class="cast-box">
+      <div id="dmGuaOut"></div>
+      <div class="modal-actions">
+        <button class="btn" type="button" id="dmShake" data-act="shake">摇第1爻</button>
+        <button class="btn ghost" type="button" data-act="reset">重摇</button>
+      </div>
+    </div>
     <textarea id="dmQ" rows="3" placeholder="所问之事（可不填）"></textarea>
     <div class="modal-actions">
       <button class="btn ghost" type="button" data-act="close">取消</button>
@@ -1221,6 +1240,84 @@ function dailyRoll(){
   state.raf = requestAnimationFrame(frame);
 }
 
+/* ===== 起卦：三枚铜钱摇六次，自下而上 ===== */
+/* 一字（3）一背（2），三枚相加：6 老阴 / 7 少阳 / 8 少阴 / 9 老阳；6、9 为动爻 */
+function coinLine(){
+  let sum = 0;
+  for (let i = 0; i < 3; i++) sum += (Math.random() < 0.5 ? 2 : 3);
+  return sum;
+}
+function bitsOf(v){ return (v === 7 || v === 9) ? 1 : 0; }
+function yaoLabel(i, yang){
+  const pos = ['初','二','三','四','五','上'];
+  const yin = yang ? '九' : '六';
+  if (i === 0) return '初' + yin;
+  if (i === 5) return '上' + yin;
+  return yin + pos[i];
+}
+function hexByBits(bits){
+  for (let i = 0; i < YI.length; i++){
+    const l = hexLines(YI[i]);
+    let ok = true;
+    for (let j = 0; j < 6; j++){ if (l[j] !== bits[j]){ ok = false; break; } }
+    if (ok) return YI[i];
+  }
+  return null;
+}
+function shake(){
+  if (!state.cast) state.cast = {v: []};
+  if (state.cast.v.length >= 6) return;
+  state.cast.v.push(coinLine());
+  if (state.cast.v.length === 6){
+    const v = state.cast.v;
+    const mov = [], bb = [];
+    for (let i = 0; i < 6; i++){
+      if (v[i] === 6){ mov.push(i); bb.push(1); }
+      else if (v[i] === 9){ mov.push(i); bb.push(0); }
+      else bb.push(bitsOf(v[i]));
+    }
+    state.cast.ben = hexByBits(v.map(bitsOf));
+    state.cast.bian = mov.length ? hexByBits(bb) : null;
+    state.cast.mov = mov;
+    el('dmTitle').textContent = '解卦 · ' + state.cast.ben.f;
+  }
+  renderCast();
+}
+function resetCast(){
+  state.cast = null;
+  const h = cur();
+  el('dmTitle').textContent = '解卦 · ' + h.f;
+  renderCast();
+}
+function renderCast(){
+  const out = el('dmGuaOut');
+  const v = state.cast ? state.cast.v : [];
+  let rows = [];
+  for (let i = 5; i >= 0; i--){
+    if (i >= v.length) continue;
+    const val = v[i], yang = bitsOf(val), isMov = (val === 6 || val === 9);
+    const kind = val === 6 ? '老阴' : val === 7 ? '少阳' : val === 8 ? '少阴' : '老阳';
+    rows.push('<div class="cast-row' + (isMov ? ' on' : '') + '"><span>' +
+      yaoLabel(i, yang) + '　' + kind + '</span><span>' + (isMov ? '动' : '') + '</span></div>');
+  }
+  let tail = '';
+  if (state.cast && state.cast.ben && v.length === 6){
+    const b = state.cast.ben, g = state.cast.bian;
+    tail += '<p class="cast-sum">本卦：<b>' + b.f + '</b>（' + idxLabel(b) + '）　' +
+      (state.cast.mov.length
+        ? '动爻：' + state.cast.mov.map(function(i){ return yaoLabel(i, bitsOf(v[i])); }).join('、')
+        : '六爻皆静，只看卦') + '</p>';
+    if (g) tail += '<p class="cast-sum">之卦：<b>' + g.f + '</b>（' + idxLabel(g) + '）　此爻动过，事就到这里。</p>';
+  }
+  out.innerHTML = rows.join('') + tail;
+  const btn = el('dmShake');
+  btn.textContent = v.length >= 6 ? '已成卦' : ('摇第' + (v.length + 1) + '爻');
+  btn.disabled = v.length >= 6;
+  el('dmGuaHint').textContent = v.length >= 6
+    ? '卦已成。所问之事写在下面，解卦会按动爻定位。'
+    : '三枚铜钱一摇，共六次，自下而上。已摇 ' + v.length + ' 爻，还需 ' + (6 - v.length) + ' 爻。';
+}
+
 /* ===== 解卦 ===== */
 function openDivine(){
   const h = cur();
@@ -1228,6 +1325,8 @@ function openDivine(){
   el('dmQ').value = '';
   el('dmResult').hidden = true;
   el('dmResult').innerHTML = '';
+  state.cast = null;
+  renderCast();
   el('divineModal').hidden = false;
   setTimeout(function(){ el('dmQ').focus(); }, 30);
 }
@@ -1255,8 +1354,18 @@ function findRisk(q){
   }
   return '';
 }
+function yaoCard(arr, idx, src){
+  const y = arr && arr[idx];
+  if (!y) return '';
+  return (src ? '<p class="yao-q-src">' + src + '</p>' : '') +
+    '<p class="yao-q"><b>处境</b>' + y.s + '</p>' +
+    '<p class="yao-q"><b>此时该做</b>' + y.d + '</p>' +
+    '<p class="yao-q"><b>易犯</b>' + y.w + '</p>' +
+    '<p class="yao-q"><b>怎么进下一爻</b>' + y.n + '</p>';
+}
 function solve(){
-  const h = cur();
+  const cast = (state.cast && state.cast.ben && state.cast.v.length === 6) ? state.cast : null;
+  const h = cast ? cast.ben : cur();
   const q = el('dmQ').value.trim();
   const box = el('dmResult');
   const ss = sentences(h.r);
@@ -1280,6 +1389,22 @@ function solve(){
     '</details>';
 
   let html = '<h5>' + h.f + '　' + idxLabel(h) + '</h5>';
+  if (cast){
+    const i = cast.mov.length ? cast.mov[cast.mov.length - 1] : -1;
+    if (i >= 0){
+      html += '<div><h5>你现在在这一爻</h5>' +
+        '<p class="q-echo">' + yaoLabel(i, bitsOf(cast.v[i])) + '　本卦 ' + h.f +
+        (cast.mov.length > 1 ? '（共 ' + cast.mov.length + ' 个动爻，取最上一爻看）' : '') + '</p>' +
+        (yaoCard(YAO[h.n], i, h.y[i]) || '<p class="res-note">此卦逐爻尚未录入（目前乾至比八卦）。</p>') +
+        (cast.bian
+          ? '<p>照旧做下去，动爻一翻，事便走到 <b>' + cast.bian.f + '</b>（之卦）同一位置：</p>' +
+            (yaoCard(YAO[cast.bian.n], i, cast.bian.y[i]) || '<p class="res-note">之卦逐爻尚未录入。</p>')
+          : '') +
+        '</div>';
+    } else {
+      html += '<p class="res-note">六爻皆静，没有动爻可定时机；此卦只能讲到卦这一层。</p>';
+    }
+  }
   if (q){
     const tp = findTopic(q);
     const risk = findRisk(q);
@@ -1365,6 +1490,8 @@ function act(name, node){
     case 'tu': go('tu'); break;
     case 'full': go('full'); break;
     case 'divine': openDivine(); break;
+    case 'shake': shake(); break;
+    case 'reset': resetCast(); break;
     case 'dl': downloadFigure(state.cur); break;
     case 'close': closeDivine(); break;
     case 'solve': solve(); break;
