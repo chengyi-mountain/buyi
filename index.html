@@ -138,9 +138,14 @@ body::before{
 .full-left .hexsvg{fill:var(--ink)}
 .full-left h3{margin:0;font-family:"Kaiti SC","STKaiti","KaiTi",serif;font-size:24px;font-weight:400;letter-spacing:.14em;text-align:center}
 .full-right{display:flex;flex-direction:column;gap:14px}
-.full-right section{border-top:1px solid var(--line);padding-top:11px}
-.full-right h4{margin:0 0 7px;font-family:"Kaiti SC","STKaiti","KaiTi",serif;font-size:13.5px;font-weight:400;letter-spacing:.24em;color:var(--cinnabar)}
-.full-right p{margin:0;font-size:14px;line-height:1.95;color:var(--ink-2);text-indent:2em}
+.full-col{border-top:1px solid var(--line);padding-top:11px}
+.full-col summary{cursor:pointer;list-style:none;margin:0;
+  font-family:"Kaiti SC","STKaiti","KaiTi",serif;font-size:13.5px;letter-spacing:.24em;color:var(--cinnabar)}
+.full-col summary::-webkit-details-marker{display:none}
+.full-col summary::after{content:"　▾";font-size:11px;color:var(--ink-3);letter-spacing:0}
+.full-col[open] summary::after{content:"　▴"}
+.full-col[open] summary{margin-bottom:7px}
+.full-col p{margin:0;font-size:14px;line-height:1.95;color:var(--ink-2);text-indent:2em}
 .yao-block{margin-top:4px}
 .yao-line{font-size:13px;line-height:1.9;color:var(--ink-2);letter-spacing:.02em;display:flex;gap:8px}
 .yao-line b{color:var(--cinnabar);font-weight:400;flex:0 0 auto;font-size:12.5px;letter-spacing:.06em}
@@ -161,6 +166,18 @@ body::before{
 .result h5{margin:0;font-family:"Kaiti SC","STKaiti","KaiTi",serif;font-size:12.5px;font-weight:400;letter-spacing:.2em;color:var(--cinnabar)}
 .result p{margin:0;font-size:13.5px;line-height:1.95;color:var(--ink-2)}
 .result .q-echo{font-size:13px;color:var(--ink-3);border-left:2px solid var(--line);padding-left:9px;line-height:1.7}
+/* 解卦：结论在前，全文折叠 */
+.res-lead{margin:0;font-family:"Kaiti SC","STKaiti","KaiTi",serif;font-size:17px;line-height:1.9;
+  color:var(--ink);letter-spacing:.04em;text-indent:2em}
+.res-points{margin:0;padding-left:1.15em;font-size:13.5px;line-height:1.95;color:var(--ink-2)}
+.res-points li{margin-bottom:3px}
+.res-more{border-top:1px dashed var(--line);padding-top:9px}
+.res-more summary{cursor:pointer;list-style:none;font-size:12.5px;letter-spacing:.12em;color:var(--ink-3)}
+.res-more summary::-webkit-details-marker{display:none}
+.res-more summary::before{content:"＋ ";color:var(--cinnabar)}
+.res-more[open] summary::before{content:"－ "}
+.res-more .res-in{margin-top:9px;display:flex;flex-direction:column;gap:10px}
+.res-note{font-size:12px;color:var(--ink-3);line-height:1.7}
 /* ===== 页脚 ===== */
 .foot{margin-top:auto;padding-top:24px;display:flex;flex-direction:column;align-items:center;gap:6px}
 .foot p{margin:0;font-size:11px;color:var(--ink-3);letter-spacing:.08em;text-align:center;line-height:1.8}
@@ -180,7 +197,8 @@ body::before{
   .full-body{flex-direction:row;align-items:flex-start;gap:34px}
   .full-left{flex:0 0 230px;position:sticky;top:24px}
   .full-right{flex:1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px;align-items:start}
-  .full-right section{border-top:1px solid var(--line);padding-top:12px}
+  .full-col{pointer-events:none}
+  .full-col summary::after{content:none}
   .tu-body{gap:24px}
   .page-head h2{font-size:23px}
 }
@@ -321,18 +339,18 @@ body::before{
           <p class="tu-guaci" id="fullGuaci"></p>
         </div>
         <div class="full-right">
-          <section>
-            <h4>人间道</h4>
+          <details class="full-col" open>
+            <summary>人间道</summary>
             <p id="fullR"></p>
-          </section>
-          <section>
-            <h4>阳宅学</h4>
+          </details>
+          <details class="full-col" open>
+            <summary>阳宅学</summary>
             <p id="fullZ"></p>
-          </section>
-          <section>
-            <h4>案例</h4>
+          </details>
+          <details class="full-col" open>
+            <summary>案例</summary>
             <p id="fullC"></p>
-          </section>
+          </details>
         </div>
       </div>
     </div>
@@ -966,26 +984,42 @@ function openDivine(){
 function closeDivine(){
   el('divineModal').hidden = true;
 }
+function sentences(t){
+  return (t || '').split('。').map(function(s){ return s.trim(); }).filter(function(s){ return s; });
+}
 function solve(){
   const h = cur();
   const q = el('dmQ').value.trim();
   const box = el('dmResult');
+  const ss = sentences(h.r);
+  const lead = ss.length ? ss[0] + '。' : h.r;
+  const points = ss.slice(1, 4);
   const yao = h.y.map(function(t){
     return '<div class="yao-line">' + t + '</div>';
   }).join('');
-  let html = '<section>' +
-    '<h5>卦辞</h5><p>' + h.x + '</p>' +
-    '<h5>六爻</h5><div class="yao-block">' + yao + '</div>' +
-    '<h5>意解</h5><p>' + h.r + '</p>';
+
+  let inner = '<div><h5>卦辞</h5><p>' + h.x + '</p></div>' +
+    '<div><h5>六爻</h5><div class="yao-block">' + yao + '</div></div>';
   if (q){
-    html += '<h5>就所问</h5>' +
+    inner += '<div><h5>就所问</h5>' +
       '<p class="q-echo">所问：' + q + '</p>' +
       '<p>' + h.c + '</p>' +
       '<p>以此为镜，回到「' + q + '」：先辨此事的时机到不到、自家的人事备不备；' +
-      '卦辞爻辞所说，皆是令人先正自己，再论进退。' + '</p>';
+      '卦辞爻辞所说，皆是令人先正自己，再论进退。</p></div>';
   }
-  html += '<h5>提示</h5><p>据经文与意解推演，供参证，不作决断。</p></section>';
-  box.innerHTML = html;
+  inner += '<div><h5>意解</h5><p>' + h.r + '</p></div>';
+
+  box.innerHTML =
+    '<h5>' + h.f + '　' + idxLabel(h) + '</h5>' +
+    '<p class="res-lead">' + lead + '</p>' +
+    (points.length
+      ? '<ol class="res-points">' + points.map(function(t){ return '<li>' + t + '。</li>'; }).join('') + '</ol>'
+      : '') +
+    '<details class="res-more"><summary>展开卦辞、六爻与意解</summary>' +
+      '<div class="res-in">' + inner + '</div>' +
+    '</details>' +
+    '<p class="res-note">据经文推演，供参证，不作决断。</p>';
+  box.hidden = false;
   box.hidden = false;
   box.scrollIntoView({block:'nearest', behavior:'smooth'});
 }
@@ -1084,6 +1118,10 @@ window.addEventListener('hashchange', function(){
 });
 
 /* ===== 启动 ===== */
+/* 窄屏：全解三栏默认收起，免得一字一句往下翻 */
+if (window.innerWidth < 768){
+  document.querySelectorAll('.full-col').forEach(function(d){ d.removeAttribute('open'); });
+}
 const boot = readHash();
 state.cur = boot.n || 1;
 setView(boot.r);

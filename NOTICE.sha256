@@ -1,7 +1,7 @@
 卜易 · buyi　内容清单（SHA-256）
 项目：https://github.com/chengyi-mountain/buyi
-生成时间：2026-11-10 14:51:51 +0800
-对应提交：610fc3adc76b732204ce0edf0720675651e6901a
+生成时间：2026-11-10 15:02:51 +0800
+对应提交：c7aa66060c11b359669a9ccae4adc90d2065491c
 文件数：83
 
 校验方法：sha256sum -c NOTICE.sha256（Linux/macOS）；
@@ -9,7 +9,7 @@
 
 1a1dbe176bc233b499d35a57db7513f2941c99ab9759f177830c9149be99005b  .gitattributes
 adcb4cee4bcc89db52f5c0e0d7d201d59a0edb67e5dfab45b1871c2fe4d2272c  NOTICE.md
-1c1caac1944ceb4b33b5db5400424dcf70442a942f36d9618a3922101734c3b5  README.md
+813f86a075b0aa1d0c94f5292be5a7217cf2cfeb84aad9c33d4326df09b11fbe  README.md
 771116d0b8ebaa654b9069e7dca3496c7a2769f28a66a2cf71a745ab47fff98b  assets/renjiandao/001.jpg
 7fc1899d16a99b9633df9aaa442ceef0e136bc8bfdab67debc590aa353805a56  assets/renjiandao/002.jpg
 a57ee9bdf62bd6a6c403cfe9151836a76c5cc8c5f99195aa6d899a590cb82272  assets/renjiandao/003.jpg
@@ -84,7 +84,7 @@ b33533a586e6b8aafbdaf5547d6489984ba39f19e98a607844a769e1cf6d75e2  data/notes_06.
 8571de2bbc356176495d054eef0d80f819736ccdd0edd9b424fc82984f730d0d  data/notes_07.json
 d9fc0a94f58ceb9c01fcd3d94236d16ad88af3560a0be2976072f7b4433b9466  data/notes_08.json
 0837b010783a5c94765af96fcd6682f68d56b9f6faf71dffbf5956e8dd06b37f  data/notes_09.json
-7c78dc6cf376d90acb31afacb074d8aa8b0f6e58532817d0c5575df1f920a4d3  index.html
+dc1e3136fb9ec38fe668ee289c56c442107305e1b4be8916864ded52ca530f97  index.html
 97ca217382b7cf79fb63e9abed0d5934ed18e440818db7931f54542b6e844b4a  tools/build.py
 a747b44a135b21c7d8dcde6347553ece83ebed6c1d47cc1944b6c36cfb885c96  tools/fetch_text.py
 83effe096934b5c053bddec3e9bd14227d7a40128e5aac02458428a160033c73  tools/inspect_pdf.py
