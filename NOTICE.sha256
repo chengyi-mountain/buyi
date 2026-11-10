@@ -1,15 +1,16 @@
 卜易 · buyi　内容清单（SHA-256）
 项目：https://github.com/chengyi-mountain/buyi
-生成时间：2026-11-10 15:16:33 +0800
-对应提交：83d08a1cd8140e76c8691301bdb3f7672619a3f1
-文件数：83
+生成时间：2026-11-10 15:20:47 +0800
+对应提交：e80567ae5ea767c2b77077db63f8613d2164d06d
+文件数：84
 
 校验方法：sha256sum -c NOTICE.sha256（Linux/macOS）；
           Get-FileHash <文件> -Algorithm SHA256（Windows）
 
 1a1dbe176bc233b499d35a57db7513f2941c99ab9759f177830c9149be99005b  .gitattributes
+6d446c492e45af05085ac6f740453dfe1bc662b8311145407b92360609494ead  MAINTENANCE.md
 adcb4cee4bcc89db52f5c0e0d7d201d59a0edb67e5dfab45b1871c2fe4d2272c  NOTICE.md
-007c130f1d1c2db85ac19962fccd8b19df2ee67475e24cc36a41ddc97b63f29d  README.md
+e3fe93b36ab0153e05e0c1b475fc2347d8f993822a687fe296c3abb64d70fdc0  README.md
 771116d0b8ebaa654b9069e7dca3496c7a2769f28a66a2cf71a745ab47fff98b  assets/renjiandao/001.jpg
 7fc1899d16a99b9633df9aaa442ceef0e136bc8bfdab67debc590aa353805a56  assets/renjiandao/002.jpg
 a57ee9bdf62bd6a6c403cfe9151836a76c5cc8c5f99195aa6d899a590cb82272  assets/renjiandao/003.jpg

@@ -77,4 +77,6 @@ tools/                  抓取、注入、拆页、清单等脚本（用法见 M
 
 ---
 
-部署、换电脑、脚本用法等维护事项：[MAINTENANCE.md](MAINTENANCE.md)
+不想依赖 AI、想自己动手维护：**不看文档也能照做**的操作手册 → [HANDBOOK.md](HANDBOOK.md)
+
+部署、换电脑、脚本用法等维护事项 → [MAINTENANCE.md](MAINTENANCE.md)
