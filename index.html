@@ -50,8 +50,22 @@ body::before{
 .head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-bottom:10px}
 .brand{font-family:"Kaiti SC","STKaiti","KaiTi","Kaiti TC",serif;font-size:20px;letter-spacing:.14em;color:var(--ink);text-decoration:none;border:1px solid var(--ink);padding:4px 9px 4px 11px;line-height:1;display:inline-flex;align-items:center;gap:2px}
 .brand span{color:var(--cinnabar)}
+.head-right{display:flex;align-items:center;gap:9px;min-width:0}
 .head-meta{font-size:12px;color:var(--ink-3);letter-spacing:.16em;display:flex;gap:7px;align-items:center;white-space:nowrap}
 .head-meta .dot{color:var(--line)}
+.bgm{
+  margin-left:2px;flex:0 0 auto;width:34px;height:34px;border-radius:50%;
+  border:1px solid var(--line);background:var(--paper-hi);color:var(--ink-3);
+  display:inline-flex;align-items:center;justify-content:center;padding:0;cursor:pointer;
+  transition:color .18s,border-color .18s,background .18s;
+}
+.bgm:hover{color:var(--cinnabar);border-color:var(--cinnabar)}
+.bgm.on{background:var(--cinnabar);border-color:var(--cinnabar-2);color:var(--paper-hi);animation:bgmBreath 3.6s ease-in-out infinite}
+.bgm.load{cursor:progress;opacity:.6}
+.bgm svg{width:17px;height:17px;display:block}
+@keyframes bgmBreath{0%,100%{box-shadow:0 0 0 0 rgba(164,57,42,0)}50%{box-shadow:0 0 0 5px rgba(164,57,42,.13)}}
+@media (prefers-reduced-motion:reduce){.bgm.on{animation:none}}
+@media (max-width:520px){.bgm{width:30px;height:30px}.bgm svg{width:15px;height:15px} .head-right{gap:7px} .head-meta{max-width:calc(100vw - 150px);overflow:hidden;text-overflow:ellipsis}}
 .slogan{margin:6px 0 0;text-align:center;font-family:"Kaiti SC","STKaiti","KaiTi",serif;font-size:15px;letter-spacing:.2em;color:var(--ink-2);position:relative;padding:9px 0}
 .slogan::before,.slogan::after{content:"";position:absolute;left:50%;transform:translateX(-50%);width:min(64%,420px);height:1px;background:linear-gradient(90deg,transparent,var(--line) 20%,var(--line) 80%,transparent)}
 .slogan::before{top:0}
@@ -263,7 +277,10 @@ body::before{
 <div class="stage">
   <header class="head">
     <a class="brand" href="#/home">卜<span>易</span></a>
-    <div class="head-meta"><span id="headIdx">第一卦</span><span class="dot">·</span><span id="headName">乾为天</span></div>
+    <div class="head-right">
+      <div class="head-meta"><span id="headIdx">第一卦</span><span class="dot">·</span><span id="headName">乾为天</span></div>
+      <button class="bgm" id="bgmBtn" type="button" data-act="bgm" aria-pressed="false" aria-label="背景音乐 空山野马" title="背景音乐 · 空山野马（点击播放）"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M9.2 18.4V6.6l8.6-1.9v11.8"/><circle cx="6.8" cy="18.6" r="2.4"/><circle cx="15.4" cy="16.8" r="2.4"/></svg></button>
+    </div>
   </header>
   <p class="slogan">心存敬畏，卜以决疑，不疑何卜</p>
 
@@ -343,6 +360,7 @@ body::before{
             <li>点「下载此图」时，浏览器会在存盘文件上现加一层极淡出处标与一行来源说明，便于追溯来源；页面显示本身不带任何水印。</li>
             <li>请勿去除标记后据为己作，勿用于课程售卖、引流或任何商业用途，勿二次公开发布（网站、网盘、公众号、短视频等）。</li>
             <li>本仓库为公开仓库，图片也可经由文件路径直接取用；标记只是声明与溯源线索，不构成技术防护，也不担保能阻止转载。</li>
+            <li>背景音乐《空山野马》由项目作者提供，仅作页面氛围配乐，不在加载时自动播放——点右上角圆形音符按钮才开始，再点一次即停。若需另行使用该音频，请自行取得授权。</li>
             <li>「图意」「阳宅学」「案例」为依卦辞爻辞推演的文字，非原书原文，不作吉凶承诺；据本站内容作出的任何决定，风险由使用者自担。</li>
             <li>若权利人认为此处使用不当，请联系仓库作者，将立即移除相关图片。</li>
           </ul>
@@ -417,6 +435,9 @@ body::before{
     <div class="result" id="dmResult" hidden></div>
   </div>
 </div>
+
+<!-- 背景音乐：默认不播，点右上角圆形音符按钮才开始（loop 循环） -->
+<audio id="bgm" src="assets/audio/kongshan-yema.mp3" loop preload="none"></audio>
 
 <script>
 /* ===== 六十四卦数据 ===== */
@@ -1991,6 +2012,40 @@ function downloadFigure(n){
 }
 
 /* ===== 交互 ===== */
+function toggleBgm(){
+  const a = el('bgm'), b = el('bgmBtn');
+  if (!a || !b) return;
+  if (a.paused){
+    a.volume = 0.35;
+    b.classList.add('on');
+    b.setAttribute('aria-pressed', 'true');
+    b.title = '背景音乐 · 空山野马（播放中，点击停止）';
+    const pr = a.play();
+    if (pr && pr.catch) pr.catch(function(){
+      b.classList.remove('on');
+      b.setAttribute('aria-pressed', 'false');
+      b.title = '背景音乐 · 空山野马（点击播放）';
+    });
+  } else {
+    a.pause();
+    b.classList.remove('on');
+    b.setAttribute('aria-pressed', 'false');
+    b.title = '背景音乐 · 空山野马（点击播放）';
+  }
+}
+
+(function(){
+  const a = el('bgm'), b = el('bgmBtn');
+  if (!a || !b) return;
+  a.addEventListener('waiting', function(){ b.classList.add('load'); });
+  a.addEventListener('playing', function(){ b.classList.remove('load'); b.classList.add('on'); });
+  a.addEventListener('pause', function(){
+    b.classList.remove('on');
+    b.setAttribute('aria-pressed', 'false');
+    b.title = '背景音乐 · 空山野马（点击播放）';
+  });
+})();
+
 function act(name, node){
   switch (name){
     case 'prev': step(-1); break;
@@ -2003,6 +2058,7 @@ function act(name, node){
     case 'shake': shake(); break;
     case 'reset': resetCast(); break;
     case 'dl': downloadFigure(state.cur); break;
+    case 'bgm': toggleBgm(); break;
     case 'close': closeDivine(); break;
     case 'solve': solve(); break;
     case 'pick':
