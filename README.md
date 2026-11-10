@@ -76,6 +76,17 @@ tools/inspect_pdf.py    检查 PDF 页数、每页图片对象
 2. Settings → Pages → Source 选 `main` / `(root)` → Save。
 3. 等一两分钟后访问 `https://<用户名>.github.io/buyi/`。
 
+## 换电脑 / 继续修改
+
+GitHub 上的仓库是唯一权威副本，本地那份只是工作副本。原电脑重装、换机器、文件误删，都不影响已经推上去的版本。
+
+- **新电脑继续改**：装 GitHub Desktop → 菜单 `File` → `Clone repository` → 选 `chengyi-mountain/buyi` → 指定本地目录 → Clone。拿到的就是带完整提交历史的可编辑副本。
+- **别用网页 Download ZIP**：只有文件、没有历史，改完再推容易和远端分叉。
+- **改完推送**：GitHub Desktop 里 `Commit to main` → 右上 `Push origin`。
+- **两边都改过**：先点 `Fetch origin`，再 `Pull`，处理完冲突再推。
+- **不要在网页上直接上传同名文件改内容**：会和本地副本分叉，下次 Push 报 “Newer commits on remote”。
+- **校验版本是否被改动**：`python tools/make_manifest.py` 重新生成 `NOTICE.sha256`，和已存的清单比对哈希即可。
+
 ## 版权与署名
 
 作者：**chengyi-mountain**（本仓库与页面同址）。本仓库内容分层，权利归属不同，完整条款见 [NOTICE.md](NOTICE.md)：
