@@ -943,6 +943,16 @@ const YONG = {
 2:{c:"用六　利永贞。",s:"六爻全动，柔到了极处，事事退让。",d:"把该守的原则写下来，长期照它做；让的让，不该让的不让。",w:"一让到底，最后连底线也没了。",n:"此爻没有下一爻：柔顺能久守其正才有利；守不住，前面的退让都成了亏。"}
 };
 
+/* 爻位不只是事情的阶段，也是你在这局里的身份位阶（依《天纪·人间道》的讲法） */
+const RANK = [
+{w:"下民",t:"刚入局，还没有位置；先把自己立住，别急着出头。"},
+{w:"将领",t:"做事的位置，管一摊人；心性要定，别随风倒。"},
+{w:"相",t:"贴着主位，最容易受猜忌；此位只有一条路——进德修业，不越权。"},
+{w:"宰",t:"近臣，替人办事而随时可退；待机而动，退了还能回来。"},
+{w:"君",t:"主位，事由你定；只看下面的人，回头看，别往上争。"},
+{w:"过",t:"事已过手，退位、宗庙之位；此时只剩亢则有悔一条。"}
+];
+
 const TOPICS = [
 { name:"出行水上",
   k:["出海","渔船","打鱼","捕鱼","船","码头","航线","渡","远行","出远门","出差","航班","飞机","高铁","开车","自驾","路上","旅游","出行"],
@@ -963,7 +973,7 @@ const TOPICS = [
   real:"把话说到明处，比揣测卦意有用；对方明确拒绝就是拒绝。" },
 
 { name:"事业工作",
-  k:["工作","上班","升职","加薪","跳槽","辞职","老板","领导","同事","项目","创业","面试","编制","公司"],
+  k:["工作","上班","升职","加薪","跳槽","辞职","老板","领导","同事","项目","创业","面试","编制","公司","岗位","摊子","接手","调岗","转正"],
   link:"照卦理能给自己定的次序：先摸清手里的活与下一个去处，再决定动不动。",
   other:"职场的结果由能力、时机、关系与制度共同决定，卦不主成败。",
   real:"想动就先摸清下家与存款能撑几个月；想留就把手里的事做出成绩。" },
@@ -1000,9 +1010,9 @@ const TOPICS = [
 
 { name:"日常杂事",
   k:[],
-  link:"照卦理能给自己定的次序：先把能查的事实查清，再问明白人，最后自己定。",
-  other:"具体怎么办，取决于现实条件与你自己能承担什么，卦不代为决断。",
-  real:"把能查清的事实查清，把能问的人问到；剩下的按常识办。" }
+  link:"照卦理能给自己定的次序：把最坏的结果先写下来，看能不能承受；承受得住再谈做不做。",
+  other:"这件事的取舍要看条件、代价和你能承担什么，卦不代为决断。",
+  real:"先写下最坏结果与补救办法；写不出来的事，先别应。" }
 ];
 
 /* 问题里出现这些词，先给现实提醒，不让卦越界 */
@@ -1272,6 +1282,12 @@ function hexByBits(bits){
   }
   return null;
 }
+/* 把某一位翻过来：此爻一失守，卦就变成另一卦。之卦不必手写，翻一位即得 */
+function flipHex(g, i){
+  const l = hexLines(g).slice();
+  l[i] = l[i] ? 0 : 1;
+  return hexByBits(l);
+}
 function shake(){
   if (!state.cast) state.cast = {v: []};
   if (state.cast.v.length >= 6) return;
@@ -1314,7 +1330,7 @@ function renderCast(){
       (state.cast.mov.length
         ? '动爻：' + state.cast.mov.map(function(i){ return yaoLabel(i, bitsOf(v[i])); }).join('、')
         : '六爻皆静（无动爻）：时机未起，看整卦') + '</p>';
-    if (g) tail += '<p class="cast-sum">之卦：<b>' + g.f + '</b>（' + idxLabel(g) + '）　此爻动过，事就到这里。</p>';
+    if (g) tail += '<p class="cast-sum">终点之卦：<b>' + g.f + '</b>（' + idxLabel(g) + '）　动爻全翻过来，事态走到这里。</p>';
     if (b.n !== cur().n){
       tail += '<p class="cast-sum">你摇出的是<b>' + b.f + '</b>，与页面上这一卦（' + cur().f + '）不同——以摇出的为准。</p>';
     }
@@ -1439,14 +1455,26 @@ function solve(){
     const lens = hexLines(f.g);
     html += '<div><h5>我判断你在哪一爻</h5><p class="q-echo">' + f.note + '</p>';
     if (f.k === 'yao' && f.i >= 0){
+      const rk = RANK[f.i];
       html += '<p class="res-lead">' + f.g.f + '　' + yaoLabel(f.i, lens[f.i]) + '　' +
         (f.g.y[f.i] || '') + '</p>' +
+        '<p class="res-note">这一爻在你这件事上的位阶：' + rk.w + '——' + rk.t + '</p>' +
         (yaoCard(YAO[f.g.n], f.i) || '<p class="res-note">此卦逐爻尚未录入（目前乾至比八卦），先按上面这句爻辞本身看。</p>');
       if (f.sub !== undefined){
         html += '<p class="res-note">另有 ' + yaoLabel(f.sub, lens[f.sub]) + '（辅看）：' +
           (yaoCard(YAO[f.g.n], f.sub) || '逐爻尚未录入。') + '</p>';
       }
-      if (cast.bian) html += '<p class="res-note">若照旧做到底，动爻一翻即成 ' + cast.bian.f + '（之卦），局面换到那里。</p>';
+      const drop = flipHex(f.g, f.i);
+      if (drop){
+        const same = cast.bian && cast.bian.n === drop.n;
+        let line = '此爻若守不住，这一位翻过来就成了 ' + drop.f + '（' + idxLabel(drop) + '）——那是失手之后走到的局面。';
+        if (same) line = '此爻一翻即成 ' + drop.f + '（' + idxLabel(drop) + '）：它既是此爻失守的去处，也是整件事走到底的落点。';
+        html += '<p class="res-note">' + line +
+          (YAO[drop.n] && YAO[drop.n][f.i] ? '到那里，同位这一段是：' + YAO[drop.n][f.i].s : '') + '</p>';
+        if (cast.bian && !same) html += '<p class="res-note">若六爻里的动爻全翻到底，终点之卦是 ' + cast.bian.f + '（' + idxLabel(cast.bian) + '）——事做到最后，局面落在那里。</p>';
+      } else if (cast.bian){
+        html += '<p class="res-note">若六爻里的动爻全翻到底，终点之卦是 ' + cast.bian.f + '（' + idxLabel(cast.bian) + '）。</p>';
+      }
     } else {
       html += '<p class="res-lead">' + f.g.f + '　' + idxLabel(f.g) + '　卦辞：' + f.g.x + '</p>' +
         '<p>' + (XIANG[f.g.n] || '') + '</p>' +
