@@ -1318,6 +1318,27 @@ function renderCast(){
     : '三枚铜钱一摇，共六次，自下而上。已摇 ' + v.length + ' 爻，还需 ' + (6 - v.length) + ' 爻。';
 }
 
+/* 按动爻定“主看哪里”：依动爻个数分六种，规则与是哪一卦无关 */
+function castFocus(cast){
+  const n = cast.mov.length;
+  if (n === 0) return {k:'gua', g:cast.ben, note:'六爻皆静，看本卦卦辞：事情停在原处，时机未动。'};
+  if (n === 1) return {k:'yao', g:cast.ben, i:cast.mov[0], note:'只有一爻动，以这一爻为主。'};
+  if (n === 2) return {k:'yao', g:cast.ben, i:cast.mov[1], sub:cast.mov[0],
+    note:'两爻动，以上面那一爻为主，下面那一爻为辅。'};
+  if (n === 3) return {k:'gua', g:cast.ben, note:'三爻动，改看卦：以本卦卦辞为主，之卦卦辞为辅。'};
+  if (n === 4){
+    const still = [];
+    for (let i = 0; i < 6; i++){ if (cast.mov.indexOf(i) < 0) still.push(i); }
+    return {k:'yao', g:cast.bian, i:still[0], note:'四爻动，之卦里剩两条静爻，以下面那条为主。'};
+  }
+  if (n === 5){
+    const still = [];
+    for (let i = 0; i < 6; i++){ if (cast.mov.indexOf(i) < 0) still.push(i); }
+    return {k:'yao', g:cast.bian, i:still[0], note:'五爻动，之卦只剩一条静爻，就看这一爻。'};
+  }
+  return {k:'gua', g:cast.ben, note:'六爻全动，乾看用九、坤看用六；其余卦看之卦卦辞。'};
+}
+
 /* ===== 解卦 ===== */
 function openDivine(){
   const h = cur();
@@ -1389,26 +1410,34 @@ function solve(){
     '</details>';
 
   let html = '<h5>' + h.f + '　' + idxLabel(h) + '</h5>';
+  let xiangShown = false;
   if (cast){
-    const i = cast.mov.length ? cast.mov[cast.mov.length - 1] : -1;
-    if (i >= 0){
-      html += '<div><h5>你现在在这一爻</h5>' +
-        '<p class="q-echo">' + yaoLabel(i, bitsOf(cast.v[i])) + '　本卦 ' + h.f +
-        (cast.mov.length > 1 ? '（共 ' + cast.mov.length + ' 个动爻，取最上一爻看）' : '') + '</p>' +
-        (yaoCard(YAO[h.n], i, h.y[i]) || '<p class="res-note">此卦逐爻尚未录入（目前乾至比八卦）。</p>') +
-        (cast.bian
-          ? '<p>照旧做下去，动爻一翻，事便走到 <b>' + cast.bian.f + '</b>（之卦）同一位置：</p>' +
-            (yaoCard(YAO[cast.bian.n], i, cast.bian.y[i]) || '<p class="res-note">之卦逐爻尚未录入。</p>')
-          : '') +
-        '</div>';
+    const f = castFocus(cast);
+    const lens = hexLines(f.g);
+    html += '<div><h5>看哪里</h5><p class="q-echo">' + f.note + '</p>';
+    if (f.k === 'yao' && f.i >= 0){
+      html += '<p class="res-lead">' + f.g.f + '　' + yaoLabel(f.i, lens[f.i]) + '　' +
+        (f.g.y[f.i] || '') + '</p>' +
+        (yaoCard(YAO[f.g.n], f.i) || '<p class="res-note">此卦逐爻尚未录入（目前乾至比八卦）。</p>');
+      if (f.sub !== undefined){
+        html += '<p class="res-note">另有 ' + yaoLabel(f.sub, lens[f.sub]) + '（辅）：' +
+          (yaoCard(YAO[f.g.n], f.sub) || '逐爻尚未录入。') + '</p>';
+      }
+      if (cast.bian) html += '<p class="res-note">照旧做下去，动爻翻过即成 ' + cast.bian.f + '（之卦），后势在那里。</p>';
     } else {
-      html += '<p class="res-note">六爻皆静，没有动爻可定时机；此卦只能讲到卦这一层。</p>';
+      xiangShown = true;
+      html += '<p class="res-lead">' + f.g.f + '　' + idxLabel(f.g) + '　卦辞：' + f.g.x + '</p>' +
+        '<p>' + (XIANG[f.g.n] || '') + '</p>' +
+        (cast.bian && f.g === cast.ben
+          ? '<p class="res-note">之卦 ' + cast.bian.f + ' 作后势参考：' + (XIANG[cast.bian.n] || '') + '</p>'
+          : '');
     }
+    html += '</div>';
   }
   if (q){
     const tp = findTopic(q);
     const risk = findRisk(q);
-    html += '<div><h5>卦在说什么</h5><p class="res-lead">' + xiang + '</p></div>' +
+    html += (xiangShown ? '' : '<div><h5>卦在说什么</h5><p class="res-lead">' + xiang + '</p></div>') +
       '<div><h5>放到你这件事上</h5>' +
         '<p class="q-echo">所问：' + q + '</p>' +
         '<p>' + tp.other + '</p>' +
