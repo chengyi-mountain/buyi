@@ -967,7 +967,7 @@ const TOPICS = [
   real:"想动就先摸清下家与存款能撑几个月；想留就把手里的事做出成绩。" },
 
 { name:"学业考试",
-  k:["考试","考研","高考","考公","考证","资格证","论文","学习","复习","成绩","录取","答辩","面试"],
+  k:["考试","考研","考博","高考","考公","考证","资格证","论文","学习","复习","成绩","录取","答辩","升学","读书","留学","出国读书","留学申请","深造","进修"],
   link:"照卦理能给自己定的次序：先把每天做多少定死，再谈状态与心态。",
   other:"分数由复习量、方法与临场状态决定，卦不主录取。",
   real:"把复习计划落到每天几页、几题；焦虑本身不产生分数。" },
@@ -1390,6 +1390,14 @@ function yaoCard(arr, idx, src){
     '<p class="yao-q"><b>易犯</b>' + y.w + '</p>' +
     '<p class="yao-q"><b>怎么进下一爻</b>' + y.n + '</p>';
 }
+function probesFor(q, tp){
+  const out = [];
+  if (tp.name !== '日常杂事' && q.length >= 14) return out;
+  out.push('你现在做什么、什么职位？还在读书的话读到哪一级？——这决定我按哪一爻说。');
+  out.push('这件事现在到哪一步：只是想法、已经在做、还是被期限逼着要定？');
+  out.push('你手上有什么：能拿出多少时间和钱，有谁帮得上忙？');
+  return out;
+}
 function solve(){
   const cast = (state.cast && state.cast.ben && state.cast.v.length === 6) ? state.cast : null;
   const h = cast ? cast.ben : cur();
@@ -1398,13 +1406,13 @@ function solve(){
   const ss = sentences(h.r);
   const xiang = XIANG[h.n] || (ss.length ? ss[0] + '。' : h.r);
   const points = ss.slice(1, 4);
-  const yao = h.y.map(function(t){
+  const yao = h.y.slice(0, 6).slice().reverse().concat(h.y.slice(6)).map(function(t){
     return '<div class="yao-line">' + t + '</div>';
   }).join('');
 
-  /* 折叠区：卦辞、六爻、意解，以及“他事参证”的原案例 */
+  /* 折叠区：卦辞、六爻（自上而下，上爻在上、初爻在下）、意解，以及“他事参证”的原案例 */
   let inner = '<div><h5>卦辞</h5><p>' + h.x + '</p></div>' +
-    '<div><h5>六爻</h5><div class="yao-block">' + yao + '</div></div>' +
+    '<div><h5>六爻（自上而下：上爻在上，初爻在下）</h5><div class="yao-block">' + yao + '</div></div>' +
     '<div><h5>意解</h5><p>' + h.r + '</p></div>';
   if (q){
     inner += '<div><h5>他事参证</h5><p>' + h.c + '</p>' +
@@ -1415,23 +1423,24 @@ function solve(){
       '<div class="res-in">' + inner + '</div>' +
     '</details>';
 
-  let html = '<h5>' + h.f + '　' + idxLabel(h) + '</h5>';
-  let xiangShown = false;
+  let html = '<div><h5>这个卦在说什么</h5><p class="res-lead">' + h.f + '　' + idxLabel(h) + '</p>' +
+    '<p>' + xiang + '</p></div>';
+
+  /* 先判爻：有动爻才定得了时机 */
   if (cast){
     const f = castFocus(cast);
     const lens = hexLines(f.g);
-    html += '<div><h5>看哪里</h5><p class="q-echo">' + f.note + '</p>';
+    html += '<div><h5>我判断你在哪一爻</h5><p class="q-echo">' + f.note + '</p>';
     if (f.k === 'yao' && f.i >= 0){
       html += '<p class="res-lead">' + f.g.f + '　' + yaoLabel(f.i, lens[f.i]) + '　' +
         (f.g.y[f.i] || '') + '</p>' +
-        (yaoCard(YAO[f.g.n], f.i) || '<p class="res-note">此卦逐爻尚未录入（目前乾至比八卦）。</p>');
+        (yaoCard(YAO[f.g.n], f.i) || '<p class="res-note">此卦逐爻尚未录入（目前乾至比八卦），先按上面这句爻辞本身看。</p>');
       if (f.sub !== undefined){
-        html += '<p class="res-note">另有 ' + yaoLabel(f.sub, lens[f.sub]) + '（辅）：' +
+        html += '<p class="res-note">另有 ' + yaoLabel(f.sub, lens[f.sub]) + '（辅看）：' +
           (yaoCard(YAO[f.g.n], f.sub) || '逐爻尚未录入。') + '</p>';
       }
-      if (cast.bian) html += '<p class="res-note">照旧做下去，动爻翻过即成 ' + cast.bian.f + '（之卦），后势在那里。</p>';
+      if (cast.bian) html += '<p class="res-note">若照旧做到底，动爻一翻即成 ' + cast.bian.f + '（之卦），局面换到那里。</p>';
     } else {
-      xiangShown = true;
       html += '<p class="res-lead">' + f.g.f + '　' + idxLabel(f.g) + '　卦辞：' + f.g.x + '</p>' +
         '<p>' + (XIANG[f.g.n] || '') + '</p>' +
         (cast.mov.length === 6 && YONG[f.g.n]
@@ -1442,26 +1451,35 @@ function solve(){
           : '');
     }
     html += '</div>';
+  } else {
+    html += '<div><h5>我判断你在哪一爻</h5>' +
+      '<p>现在还没摇卦：没有动爻，就没有“时机”可定，我只能讲到卦这一层。</p>' +
+      '<p class="res-note">卦是象，爻是时机。摇完六次（弹窗上方「摇第 N 爻」）再点「解」，我才能说你卡在第几爻、该做什么才进得去下一爻、不做会走到哪一卦。</p></div>';
   }
+
   if (q){
     const tp = findTopic(q);
     const risk = findRisk(q);
-    html += (xiangShown ? '' : '<div><h5>卦在说什么</h5><p class="res-lead">' + xiang + '</p></div>') +
-      '<div><h5>放到你这件事上</h5>' +
+    const probes = probesFor(q, tp);
+    if (probes.length){
+      html += '<div><h5>补几句话，我才判得准</h5>' +
+        probes.map(function(t){ return '<p class="q-echo">' + t + '</p>'; }).join('') +
+        '<p class="res-note">把这些写进上面的框里，再点一次「解」。</p></div>';
+    }
+    html += '<div><h5>放到你这件事上</h5>' +
         '<p class="q-echo">所问：' + q + '</p>' +
         '<p>' + tp.other + '</p>' +
         '<p>' + tp.link + '</p>' +
         '<p class="res-note">若此卦与你问的不是同一类事，不必硬套——卦给的是一套看事的次序，结论还在现实里。</p></div>' +
       '<div><h5>现实一条</h5><p>' + (risk ? risk + '　' : '') + tp.real + '</p></div>';
   } else {
-    html += (xiangShown ? '' : '<p class="res-lead">' + xiang + '</p>') +
-      (points.length
+    html += (points.length
         ? '<ol class="res-points">' + points.map(function(t){ return '<li>' + t + '。</li>'; }).join('') + '</ol>'
         : '');
   }
 
   box.innerHTML = html + more +
-    '<p class="res-note">据经文与卦象推演，供参证；不涉吉凶承诺，也不替代现实判断。</p>';
+    '<p class="res-note">以上依《易经》卦象与爻位推演，属参证之言，不构成任何决定；涉及安全、健康、法律、钱款，以现实条件与专业意见为准。</p>';
   box.hidden = false;
   box.scrollIntoView({block:'nearest', behavior:'smooth'});
 }
