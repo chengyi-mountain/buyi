@@ -65,7 +65,16 @@ body::before{
 .bgm svg{width:17px;height:17px;display:block}
 @keyframes bgmBreath{0%,100%{box-shadow:0 0 0 0 rgba(164,57,42,0)}50%{box-shadow:0 0 0 5px rgba(164,57,42,.13)}}
 @media (prefers-reduced-motion:reduce){.bgm.on{animation:none}}
-@media (max-width:520px){.bgm{width:30px;height:30px}.bgm svg{width:15px;height:15px} .head-right{gap:7px} .head-meta{max-width:calc(100vw - 150px);overflow:hidden;text-overflow:ellipsis}}
+@media (max-width:520px){
+  .bgm{width:30px;height:30px;position:relative}.bgm svg{width:15px;height:15px}
+  .bgm::after{content:"";position:absolute;inset:-7px;border-radius:50%}
+  .btn{min-height:44px;font-size:14.5px}
+  .cell-no{font-size:12px}
+  .cell-name{font-size:13px}
+  .note{font-size:12.5px}
+  .fig-dl{font-size:13px;padding:6px 10px}
+  .notice{font-size:13.5px}
+  .notice li{margin-bottom:7px} .head-right{gap:7px} .head-meta{max-width:calc(100vw - 150px);overflow:hidden;text-overflow:ellipsis}}
 .slogan{margin:6px 0 0;text-align:center;font-family:"Kaiti SC","STKaiti","KaiTi",serif;font-size:15px;letter-spacing:.2em;color:var(--ink-2);position:relative;padding:9px 0}
 .slogan::before,.slogan::after{content:"";position:absolute;left:50%;transform:translateX(-50%);width:min(64%,420px);height:1px;background:linear-gradient(90deg,transparent,var(--line) 20%,var(--line) 80%,transparent)}
 .slogan::before{top:0}
@@ -87,6 +96,14 @@ body::before{
 .renjiandao{margin:0;width:min(100%,520px);display:flex;flex-direction:column;gap:9px}
 .fig-frame{position:relative;border:1px solid var(--line);padding:7px;background:rgba(255,252,244,.55);box-shadow:0 1px 0 rgba(31,28,24,.06),0 12px 26px -22px rgba(31,28,24,.5);width:100%;max-width:420px;margin:0 auto}
 .fig-frame img{display:block;width:100%;height:auto;cursor:zoom-in}
+.zoomview{position:fixed;inset:0;z-index:90;background:var(--paper-hi);display:none;overflow:auto;-webkit-overflow-scrolling:touch;padding:8px}
+.zoomview.on{display:block}
+.zoomview img{display:block;width:max(100%,820px);height:auto;margin:0 auto;box-shadow:0 2px 20px -14px rgba(0,0,0,.7)}
+.zoomview p{margin:12px 0 4px;text-align:center;font-size:12.5px;letter-spacing:.1em;color:var(--ink-3)}
+.zoomview .zv-x{position:fixed;top:10px;right:10px;z-index:95;width:40px;height:40px;border-radius:50%;
+  border:1px solid var(--line);background:var(--paper-hi);color:var(--ink-2);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;padding:0;
+  box-shadow:0 2px 10px -8px rgba(0,0,0,.6)}
 .fig-link{display:block;line-height:0}
 .fig-dl{position:absolute;left:8px;bottom:8px;padding:4px 8px;border:1px solid rgba(164,57,42,.35);background:rgba(239,232,218,.92);color:var(--cinnabar);font-family:"Kaiti SC","STKaiti","KaiTi",serif;font-size:11.5px;letter-spacing:.08em;cursor:pointer;opacity:.72;transition:opacity .2s}
 .fig-dl:hover{opacity:1}
@@ -250,6 +267,7 @@ body::before{
   .cell .cell-name{font-size:12px}
 }
 /* 窄屏：整页图解限高，别把按钮挤到两屏以外；想看细节点图开原尺寸 */
+@media (max-width:768px){.fig-frame::after{content:"点图放大";position:absolute;right:8px;bottom:8px;font-size:12px;letter-spacing:.08em;color:var(--ink-3);border:1px dashed var(--line);background:rgba(239,232,218,.9);padding:3px 7px;pointer-events:none}}
 @media (max-width:768px){
   .fig-frame img{width:auto;max-width:100%;max-height:56vh;margin:0 auto}
   .fig-frame{max-width:min(100%,420px)}
@@ -435,6 +453,9 @@ body::before{
     <div class="result" id="dmResult" hidden></div>
   </div>
 </div>
+
+<!-- 放大查看整页图解（手机端图字太小，点图进入） -->
+<div class="zoomview" id="zoomView" aria-hidden="true"><button class="zv-x" type="button" aria-label="关闭放大图"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6l-12 12"/></svg></button><img id="zoomImg" alt="人间道图解原页"><p>点空白处也可关闭 · 可双指缩放</p></div>
 
 <!-- 背景音乐：默认不播，点右上角圆形音符按钮才开始（loop 循环） -->
 <audio id="bgm" src="assets/audio/kongshan-yema.mp3" loop preload="none"></audio>
@@ -2015,6 +2036,25 @@ function downloadFigure(n){
 /* 音量固定：页面不提供任何音量控件，也不随点击改变 */
 const BGM_VOL = 0.15;
 
+function openZoom(src){
+  const z = el('zoomView'), im = el('zoomImg');
+  if (!z || !im) return;
+  im.setAttribute('src', src);
+  z.classList.add('on');
+  z.setAttribute('aria-hidden', 'false');
+  z.scrollTop = 0;
+  document.body.style.overflow = 'hidden';
+}
+
+function closeZoom(){
+  const z = el('zoomView'), im = el('zoomImg');
+  if (!z) return;
+  z.classList.remove('on');
+  z.setAttribute('aria-hidden', 'true');
+  if (im) im.removeAttribute('src');
+  document.body.style.overflow = '';
+}
+
 function toggleBgm(){
   const a = el('bgm'), b = el('bgmBtn');
   if (!a || !b) return;
@@ -2076,11 +2116,15 @@ function act(name, node){
 }
 
 document.addEventListener('click', function(e){
+  if (e.target.closest('#zoomView')){ closeZoom(); return; }
+  const pic = e.target.closest('.fig-frame img');
+  if (pic){ openZoom(pic.getAttribute('src')); return; }
   const b = e.target.closest('[data-act]');
   if (b) act(b.dataset.act, b);
 });
 
 document.addEventListener('keydown', function(e){
+  if (e.key === 'Escape' && el('zoomView') && el('zoomView').classList.contains('on')){ closeZoom(); return; }
   if (e.key === 'Escape' && !el('divineModal').hidden){ closeDivine(); return; }
   if (!el('divineModal').hidden) return;
   if (state.route !== 'home') return;
