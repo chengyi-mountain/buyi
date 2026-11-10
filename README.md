@@ -2,6 +2,8 @@
 
 > 心存敬畏，卜以决疑，不疑何卜。
 
+**在线看**：<https://chengyi-mountain.github.io/buyi/>　|　**本地看**：下载仓库，双击 `index.html`
+
 一个能双击打开、也能挂 GitHub Pages 的《周易》六十四卦参证小站。一屏一卦：卦画六爻自绘，卦辞爻辞随卦而变，配一张人间道图解，另附人间道、阳宅学、案例三栏参证。
 
 **一屏一卦**：卦象按六横线重绘（上爻在最上），旁边是卦名、上卦下卦与序位，随卦切换。
@@ -65,6 +67,10 @@ tools/inspect_pdf.py    检查 PDF 页数、每页图片对象
 - 本地以 `file://` 打开时浏览器取不到图（跨域限制），此时按钮会退化为直接打开原图，存下的文件不带标记——这是已知限制。
 
 ## 发布到 GitHub Pages
+
+现已发布，地址：<https://chengyi-mountain.github.io/buyi/>
+
+改动推上 `main` 后会自动重新部署，通常一两分钟生效。若需重新开启：
 
 1. 仓库根目录保留 `index.html`（Pages 默认首页）。
 2. Settings → Pages → Source 选 `main` / `(root)` → Save。
