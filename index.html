@@ -166,6 +166,7 @@ body::before{
 .cast-row.on{color:var(--cinnabar)}
 .cast-sum{margin:9px 0 0;font-size:13.5px;line-height:1.9;color:var(--ink-2)}
 .cast-sum b{font-weight:400;color:var(--ink)}
+.cast-legend{margin:6px 0 0;font-size:11.5px;line-height:1.85;color:var(--ink-3)}
 /* 弹窗里的逐爻卡 */
 .result .yao-q{margin:2px 0}
 .result .yao-q b{display:inline-block;min-width:5.6em;font-weight:400;
@@ -406,6 +407,7 @@ body::before{
         <button class="btn" type="button" id="dmShake" data-act="shake">摇第1爻</button>
         <button class="btn ghost" type="button" data-act="reset">重摇</button>
       </div>
+      <p class="cast-legend">三枚铜钱：一背记 2、一字记 3，相加得 6 老阴、7 少阳、8 少阴、9 老阳。老阴老阳是动爻，动爻翻过来就是之卦；六爻里没有 6 与 9，就是静卦，只能看整卦。</p>
     </div>
     <textarea id="dmQ" rows="3" placeholder="所问之事（可不填）"></textarea>
     <div class="modal-actions">
@@ -1302,7 +1304,7 @@ function renderCast(){
   for (let i = 5; i >= 0; i--){
     if (i >= v.length) continue;
     const val = v[i], yang = bitsOf(val), isMov = (val === 6 || val === 9);
-    const kind = val === 6 ? '老阴' : val === 7 ? '少阳' : val === 8 ? '少阴' : '老阳';
+    const kind = (val === 6 ? '老阴' : val === 7 ? '少阳' : val === 8 ? '少阴' : '老阳') + '（' + val + '）';
     rows.push('<div class="cast-row' + (isMov ? ' on' : '') + '"><span>' +
       yaoLabel(i, yang) + '　' + kind + '</span><span>' + (isMov ? '动' : '') + '</span></div>');
   }
@@ -1312,7 +1314,7 @@ function renderCast(){
     tail += '<p class="cast-sum">本卦：<b>' + b.f + '</b>（' + idxLabel(b) + '）　' +
       (state.cast.mov.length
         ? '动爻：' + state.cast.mov.map(function(i){ return yaoLabel(i, bitsOf(v[i])); }).join('、')
-        : '六爻皆静，只看卦') + '</p>';
+        : '六爻皆静（无动爻）：时机未起，看整卦') + '</p>';
     if (g) tail += '<p class="cast-sum">之卦：<b>' + g.f + '</b>（' + idxLabel(g) + '）　此爻动过，事就到这里。</p>';
   }
   out.innerHTML = rows.join('') + tail;
@@ -1327,7 +1329,8 @@ function renderCast(){
 /* 按动爻定“主看哪里”：依动爻个数分六种，规则与是哪一卦无关 */
 function castFocus(cast){
   const n = cast.mov.length;
-  if (n === 0) return {k:'gua', g:cast.ben, note:'六爻皆静，看本卦卦辞：事情停在原处，时机未动。'};
+  if (n === 0) return {k:'gua', g:cast.ben,
+    note:'六爻皆静：这一局没有动爻，说明事情还停着、还没有起变化。此时不看“第几爻”，只看整卦——卦辞说什么，先照做，不进不退，等它自己动。'};
   if (n === 1) return {k:'yao', g:cast.ben, i:cast.mov[0], note:'只有一爻动，以这一爻为主。'};
   if (n === 2) return {k:'yao', g:cast.ben, i:cast.mov[1], sub:cast.mov[0],
     note:'两爻动，以上面那一爻为主，下面那一爻为辅。'};
