@@ -1,7 +1,7 @@
 卜易 · buyi　内容清单（SHA-256）
 项目：https://github.com/chengyi-mountain/buyi
-生成时间：2026-11-10 17:25:08 +0800
-对应提交：4f51099514bc4d5a409a7e1e706aa9f1bc7a53f2
+生成时间：2026-11-10 17:25:16 +0800
+对应提交：c1c3e301b7a13247b9dac7484de43845392af894
 文件数：86
 
 校验方法：sha256sum -c NOTICE.sha256（Linux/macOS）；
