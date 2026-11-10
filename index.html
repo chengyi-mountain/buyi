@@ -1287,14 +1287,13 @@ function shake(){
     state.cast.ben = hexByBits(v.map(bitsOf));
     state.cast.bian = mov.length ? hexByBits(bb) : null;
     state.cast.mov = mov;
-    el('dmTitle').textContent = '解卦 · ' + state.cast.ben.f;
+    el('dmTitle').textContent = '解卦 · 你的卦：' + state.cast.ben.f;
   }
   renderCast();
 }
 function resetCast(){
   state.cast = null;
-  const h = cur();
-  el('dmTitle').textContent = '解卦 · ' + h.f;
+  el('dmTitle').textContent = '解卦 · 尚未起卦';
   renderCast();
 }
 function renderCast(){
@@ -1316,6 +1315,9 @@ function renderCast(){
         ? '动爻：' + state.cast.mov.map(function(i){ return yaoLabel(i, bitsOf(v[i])); }).join('、')
         : '六爻皆静（无动爻）：时机未起，看整卦') + '</p>';
     if (g) tail += '<p class="cast-sum">之卦：<b>' + g.f + '</b>（' + idxLabel(g) + '）　此爻动过，事就到这里。</p>';
+    if (b.n !== cur().n){
+      tail += '<p class="cast-sum">你摇出的是<b>' + b.f + '</b>，与页面上这一卦（' + cur().f + '）不同——以摇出的为准。</p>';
+    }
   }
   out.innerHTML = rows.join('') + tail;
   const btn = el('dmShake');
@@ -1323,7 +1325,9 @@ function renderCast(){
   btn.disabled = v.length >= 6;
   el('dmGuaHint').textContent = v.length >= 6
     ? '卦已成。所问之事写在下面，解卦会按动爻定位。'
-    : '三枚铜钱一摇，共六次，自下而上。已摇 ' + v.length + ' 爻，还需 ' + (6 - v.length) + ' 爻。';
+    : (v.length === 0
+      ? '三枚铜钱一摇，共六次，自下而上。注意：页面上这一卦（' + cur().f + '）只是你在看的卦，不是你摇的卦；摇完六次才出你自己的卦。'
+      : '三枚铜钱一摇，共六次，自下而上。已摇 ' + v.length + ' 爻，还需 ' + (6 - v.length) + ' 爻。');
 }
 
 /* 按动爻定“主看哪里”：依动爻个数分六种，规则与是哪一卦无关 */
@@ -1350,8 +1354,7 @@ function castFocus(cast){
 
 /* ===== 解卦 ===== */
 function openDivine(){
-  const h = cur();
-  el('dmTitle').textContent = '解卦 · ' + h.f;
+  el('dmTitle').textContent = '解卦 · 尚未起卦';
   el('dmQ').value = '';
   el('dmResult').hidden = true;
   el('dmResult').innerHTML = '';
@@ -1426,7 +1429,8 @@ function solve(){
       '<div class="res-in">' + inner + '</div>' +
     '</details>';
 
-  let html = '<div><h5>这个卦在说什么</h5><p class="res-lead">' + h.f + '　' + idxLabel(h) + '</p>' +
+  let html = '<div><h5>这个卦在说什么</h5><p class="res-lead">' + h.f + '　' + idxLabel(h) +
+    (cast ? '（你摇出的卦）' : '（页面上这一卦，不是你摇的）') + '</p>' +
     '<p>' + xiang + '</p></div>';
 
   /* 先判爻：有动爻才定得了时机 */
