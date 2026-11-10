@@ -4,6 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>卜易 · 心存敬畏，卜以决疑，不疑何卜</title>
+<meta name="description" content="《周易》六十四卦参证页：一屏一卦，卦象六爻自绘，卦辞爻辞随卦而变，附人间道图解与阳宅学、案例三栏。">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="卜易 · buyi">
+<meta property="og:title" content="卜易 · 六十四卦参证">
+<meta property="og:description" content="一屏一卦，卦象自绘，卦辞爻辞随卦而变；附人间道图解与阳宅学、案例三栏。心存敬畏，卜以决疑，不疑何卜。">
+<meta property="og:url" content="https://chengyi-mountain.github.io/buyi/">
+<meta property="og:image" content="https://chengyi-mountain.github.io/buyi/assets/renjiandao/001.jpg">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23efe8da'/%3E%3Cg fill='%231f1c18'%3E%3Crect x='12' y='13' width='40' height='5'/%3E%3Crect x='12' y='23' width='17' height='5'/%3E%3Crect x='35' y='23' width='17' height='5'/%3E%3Crect x='12' y='33' width='40' height='5'/%3E%3Crect x='12' y='43' width='17' height='5'/%3E%3Crect x='35' y='43' width='17' height='5'/%3E%3Crect x='12' y='53' width='40' height='4'/%3E%3C/g%3E%3C/svg%3E">
 <style>
 :root{
@@ -871,13 +879,19 @@ function render(){
   else if (state.route === 'all') renderAll();
   else if (state.route === 'tu') renderTu();
   else if (state.route === 'full') renderFull();
+  updateMeta();
+  syncHash();
 }
 
 /* ===== 路由 ===== */
-function readRoute(){
-  const m = /#\/(home|all|tu|full)/.exec(location.hash);
-  return m ? m[1] : 'home';
+function readHash(){
+  const m = /#\/(home|all|tu|full)(?:\/(\d{1,2}))?/.exec(location.hash || '');
+  const r = m ? m[1] : 'home';
+  let n = m && m[2] ? parseInt(m[2], 10) : null;
+  if (!(n >= 1 && n <= 64)) n = null;
+  return {r: r, n: n};
 }
+function readRoute(){ return readHash().r; }
 function setView(r){
   state.route = r;
   ['home','all','tu','full'].forEach(function(k){
@@ -885,9 +899,18 @@ function setView(r){
   });
   render();
 }
-function go(r){
-  if (readRoute() === r) setView(r);
-  else location.hash = '#/' + r;
+function go(r, n){
+  const num = (n === undefined || n === null) ? state.cur : n;
+  const target = '#/' + r + '/' + num;
+  if (location.hash === target) setView(r);
+  else location.hash = target;
+}
+/* 换卦后把地址同步成可分享的 #/视图/卦号，不产生历史记录 */
+function syncHash(){
+  const target = '#/' + state.route + '/' + state.cur;
+  if (location.hash !== target){
+    history.replaceState(null, '', target);
+  }
 }
 
 /* ===== 换卦 ===== */
@@ -1054,11 +1077,16 @@ document.addEventListener('keydown', function(e){
   if (e.key === 'ArrowRight'){ step(1); }
 });
 
-window.addEventListener('hashchange', function(){ setView(readRoute()); });
+window.addEventListener('hashchange', function(){
+  const h = readHash();
+  if (h.n) state.cur = h.n;
+  setView(h.r);
+});
 
 /* ===== 启动 ===== */
-state.cur = 1;
-setView(readRoute());
+const boot = readHash();
+state.cur = boot.n || 1;
+setView(boot.r);
 </script>
 </body>
 </html>
