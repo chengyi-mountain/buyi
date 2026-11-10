@@ -1,8 +1,8 @@
 卜易 · buyi　内容清单（SHA-256）
 项目：https://github.com/chengyi-mountain/buyi
-生成时间：2026-11-10 18:37:15 +0800
-对应提交：b13e66e8309cce3c660a75eb9156310d441fef5f
-文件数：86
+生成时间：2026-11-10 18:38:19 +0800
+对应提交：b50691e5e5e0f8313d68a5fef08456bf94232708
+文件数：87
 
 校验方法：sha256sum -c NOTICE.sha256（Linux/macOS）；
           Get-FileHash <文件> -Algorithm SHA256（Windows）
@@ -12,6 +12,7 @@ eb29bc9c945e5a019d2e0c6c08215a2e201d630c28c28a31e9324ab80cb045cb  HANDBOOK.md
 51a006d130d4e39be201891d7fcf443b24016221c3bd1e815d28d2107ce4bdd4  MAINTENANCE.md
 adcb4cee4bcc89db52f5c0e0d7d201d59a0edb67e5dfab45b1871c2fe4d2272c  NOTICE.md
 f31c66142865265df3b4db6842cb5cb4eac07d87a628e6d19f97083ae7994033  README.md
+2b052140772a0bd5994b6b1b6a016bf89421934bfa3d43331d0d45b85018a617  assets/audio/kongshan-yema.mp3
 7a3fdd37f0ca976eacff9f72b9e95d9a71335db1663663525bf9a271f6bc515b  assets/renjiandao/001.jpg
 d0ac65fc9d9ac3239988fbc022366373a67d2a5b93902a886449ab4d6c14f958  assets/renjiandao/002.jpg
 a5f4a9aa55380ddc079be92cfe9c9b90af924759a433ac72795f461a57d72a6e  assets/renjiandao/003.jpg
@@ -86,7 +87,7 @@ b33533a586e6b8aafbdaf5547d6489984ba39f19e98a607844a769e1cf6d75e2  data/notes_06.
 8571de2bbc356176495d054eef0d80f819736ccdd0edd9b424fc82984f730d0d  data/notes_07.json
 d9fc0a94f58ceb9c01fcd3d94236d16ad88af3560a0be2976072f7b4433b9466  data/notes_08.json
 0837b010783a5c94765af96fcd6682f68d56b9f6faf71dffbf5956e8dd06b37f  data/notes_09.json
-8c23e023eb762d67bfd22b737fd2d5544a82d89ad8469a5543a5784f03a08bd9  index.html
+b58ff69465d7274969dcab049c8213831aba4368a2569c73f0a4ea2991d71941  index.html
 97ca217382b7cf79fb63e9abed0d5934ed18e440818db7931f54542b6e844b4a  tools/build.py
 a747b44a135b21c7d8dcde6347553ece83ebed6c1d47cc1944b6c36cfb885c96  tools/fetch_text.py
 83effe096934b5c053bddec3e9bd14227d7a40128e5aac02458428a160033c73  tools/inspect_pdf.py

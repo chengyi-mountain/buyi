@@ -2012,11 +2012,14 @@ function downloadFigure(n){
 }
 
 /* ===== 交互 ===== */
+/* 音量固定：页面不提供任何音量控件，也不随点击改变 */
+const BGM_VOL = 0.18;
+
 function toggleBgm(){
   const a = el('bgm'), b = el('bgmBtn');
   if (!a || !b) return;
   if (a.paused){
-    a.volume = 0.35;
+    a.volume = BGM_VOL;
     b.classList.add('on');
     b.setAttribute('aria-pressed', 'true');
     b.title = '背景音乐 · 空山野马（播放中，点击停止）';
@@ -2037,6 +2040,8 @@ function toggleBgm(){
 (function(){
   const a = el('bgm'), b = el('bgmBtn');
   if (!a || !b) return;
+  a.volume = BGM_VOL;
+  a.addEventListener('volumechange', function(){ if (a.volume !== BGM_VOL) a.volume = BGM_VOL; });
   a.addEventListener('waiting', function(){ b.classList.add('load'); });
   a.addEventListener('playing', function(){ b.classList.remove('load'); b.classList.add('on'); });
   a.addEventListener('pause', function(){
