@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>卜易 · 心存敬畏，卜以决疑，不疑何卜</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23efe8da'/%3E%3Cg fill='%231f1c18'%3E%3Crect x='12' y='13' width='40' height='5'/%3E%3Crect x='12' y='23' width='17' height='5'/%3E%3Crect x='35' y='23' width='17' height='5'/%3E%3Crect x='12' y='33' width='40' height='5'/%3E%3Crect x='12' y='43' width='17' height='5'/%3E%3Crect x='35' y='43' width='17' height='5'/%3E%3Crect x='12' y='53' width='40' height='4'/%3E%3C/g%3E%3C/svg%3E">
+<style>
+:root{
+  --paper:#efe8da;
+  --paper-hi:#f6f1e5;
+  --paper-lo:#e5dbc9;
+  --ink:#1f1c18;
+  --ink-2:#4b443b;
+  --ink-3:#7c7366;
+  --line:#cdc0a8;
+  --line-soft:#ded4be;
+  --cinnabar:#a4392a;
+  --cinnabar-2:#8c2d20;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:radial-gradient(120% 90% at 50% -10%, var(--paper-hi) 0%, var(--paper) 46%, var(--paper-lo) 100%);
+  background-attachment:fixed;
+  color:var(--ink);
+  font-family:"Songti SC","STSong","SimSun","Noto Serif CJK SC",serif;
+  -webkit-font-smoothing:antialiased;
+  min-height:100vh;
+  overflow-x:hidden;
+}
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.55;mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.10'/%3E%3C/svg%3E");
+}
+/* ===== 幕布 ===== */
+.curtain{position:fixed;top:0;bottom:0;width:min(8vw,88px);z-index:1;pointer-events:none}
+.curtain-l{left:0;background:linear-gradient(90deg,rgba(31,28,24,.16),rgba(31,28,24,.05) 40%,rgba(31,28,24,0));border-right:1px solid rgba(31,28,24,.10)}
+.curtain-r{right:0;background:linear-gradient(270deg,rgba(31,28,24,.16),rgba(31,28,24,.05) 40%,rgba(31,28,24,0));border-left:1px solid rgba(31,28,24,.10)}
+.stage{position:relative;z-index:2;max-width:1040px;margin:0 auto;padding:18px 20px 40px;display:flex;flex-direction:column;min-height:100vh}
+/* ===== 页眉 ===== */
+.head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-bottom:10px}
+.brand{font-family:"Kaiti SC","STKaiti","KaiTi","Kaiti TC",serif;font-size:20px;letter-spacing:.14em;color:var(--ink);text-decoration:none;border:1px solid var(--ink);padding:4px 9px 4px 11px;line-height:1;display:inline-flex;align-items:center;gap:2px}
+.brand span{color:var(--cinnabar)}
+.head-meta{font-size:12px;color:var(--ink-3);letter-spacing:.16em;display:flex;gap:7px;align-items:center;white-space:nowrap}
+.head-meta .dot{color:var(--line)}
+.slogan{margin:6px 0 0;text-align:center;font-family:"Kaiti SC","STKaiti","KaiTi",serif;font-size:15px;letter-spacing:.2em;color:var(--ink-2);position:relative;padding:9px 0}
+.slogan::before,.slogan::after{content:"";position:absolute;left:50%;transform:translateX(-50%);width:min(64%,420px);height:1px;background:linear-gradient(90deg,transparent,var(--line) 20%,var(--line) 80%,transparent)}
+.slogan::before{top:0}
+.slogan::after{bottom:0}
+/* ===== 视图 ===== */
+.view{display:none;flex:1;flex-direction:column;animation:fade .32s ease both}
+.view.on{display:flex}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+/* ===== 首页 ===== */
+.cover{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:14px 0 6px;gap:22px}
+.hex-stage{position:relative;display:flex;flex-direction:column;align-items:center;gap:14px;width:100%}
+.hex-img{height:auto;display:flex;justify-content:center;transition:opacity .18s ease,filter .18s ease}
+.hex-img.rolling{opacity:.72;filter:blur(.4px)}
+.hexsvg{display:block;fill:var(--ink)}
+.hex-title{text-align:center}
+.hex-title h1{margin:0;font-family:"Kaiti SC","STKaiti","KaiTi",serif;font-size:30px;font-weight:400;letter-spacing:.16em;color:var(--ink)}
+.hex-title p{margin:7px 0 0;font-size:12px;letter-spacing:.2em;color:var(--ink-3)}
+/* 图位 */
+.renjiandao{margin:0;width:min(100%,520px);display:flex;flex-direction:column;gap:9px}
+.fig-frame{position:relative;border:1px solid var(--line);padding:7px;background:rgba(255,252,244,.55);box-shadow:0 1px 0 rgba(31,28,24,.06),0 12px 26px -22px rgba(31,28,24,.5)}
+.fig-frame img{display:block;width:100%;height:auto}
+.fig-frame.empty{aspect-ratio:4/3;display:flex;align-items:center;justify-content:center;background:
+  repeating-linear-gradient(45deg,rgba(31,28,24,.03) 0 6px,transparent 6px 12px),rgba(255,252,244,.5)}
+.fig-frame.empty::after{content:"人间道图 · 图位待置";font-family:"Kaiti SC","STKaiti","KaiTi",serif;font-size:13px;letter-spacing:.16em;color:var(--ink-3)}
+.fig-frame .seal{position:absolute;right:14px;bottom:12px;width:40px;height:40px;border:1px solid rgba(164,57,42,.55);color:var(--cinnabar);font-family:"Kaiti SC","Kaiti","KaiTi",serif;font-size:10px;line-height:1.1;display:flex;align-items:center;justify-content:center;text-align:center;letter-spacing:.02em;opacity:.85;background:rgba(239,232,218,.35)}
+.renjiandao figcaption{font-family:"Kaiti SC","STKaiti","KaiTi",serif;font-size:12.5px;letter-spacing:.1em;color:var(--ink-3);text-align:center}
+/* ===== 按钮 ===== */
+.pads{display:flex;flex-direction:column;align-items:center;gap:10px;padding:18px 0 8px}
+.pad-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;width:min(100%,400px)}
+.btn{
+  appearance:none;cursor:pointer;
+  grid-column:span 1;
+  padding:11px 4px;border:1px solid var(--line);border-radius:2px;
+  background:rgba(255,252,244,.28);color:var(--ink);
+  font-family:"Kaiti SC","STKaiti","KaiTi",serif;font-size:14.5px;letter-spacing:.16em;line-height:1.1;
+  transition:border-color .2s,color .2s,background .2s,transform .12s;
+  min-height:44px;
+}
+.btn:hover{border-color:var(--cinnabar);color:var(--cinnabar);background:rgba(164,57,42,.05)}
+.btn:active{transform:translateY(1px)}
+.btn:focus-visible{outline:1px solid var(--cinnabar);outline-offset:2px}
+.btn.key{background:var(--ink);border-color:var(--ink);color:var(--paper-hi)}
+.btn.key:hover{background:var(--cinnabar-2);border-color:var(--cinnabar-2);color:#fbf6ea}
+.btn.ghost{color:var(--ink-2);border-color:var(--line-soft)}
+.btn[disabled]{opacity:.55;cursor:not-allowed}
+/* ===== 二级页 ===== */
+.page{flex:1;display:flex;flex-direction:column;gap:16px;padding-top:18px}
+.page-head{display:flex;align-items: baseline;gap:14px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:11px}
+.page-head h2{margin:0;font-family:"Kaiti SC","STKaiti","KaiTi",serif;font-size:20px;font-weight:400;letter-spacing:.14em}
+.back{color:var(--ink-3);font-size:12.5px;letter-spacing:.1em;text-decoration:none}
+.back:hover{color:var(--cinnabar)}
+.note{font-size:11.5px;color:var(--ink-3);letter-spacing:.06em;border:1px dashed var(--line);padding:6px 9px;line-height:1.6}
+/* 全卦矩阵 */
+.gua-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.cell{
+  all:unset;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;
+  padding:11px 4px 9px;border:1px solid var(--line-soft);border-radius:2px;background:rgba(255,252,244,.28);
+  transition:border-color .18s,background .18s,transform .12s;min-height:96px;justify-content:center
+}
+.cell:hover{border-color:var(--cinnabar);background:rgba(164,57,42,.05)}
+.cell.cur{border-color:var(--ink);background:rgba(31,28,24,.05)}
+.cell .cell-svg{fill:var(--ink);opacity:.92}
+.cell .cell-no{font-size:10.5px;color:var(--ink-3);letter-spacing:.14em}
+.cell .cell-name{font-family:"Kaiti SC","STKaiti","KaiTi",serif;font-size:13.5px;letter-spacing:.08em;color:var(--ink);text-align:center;line-height:1.2}
+/* 图解 */
+.tu-body{display:flex;flex-direction:column;gap:20px;align-items:center}
+.tu-hex{display:flex;flex-direction:column;align-items:center;gap:10px}
+.tu-hex h3{margin:0;font-family:"Kaiti SC","STKaiti","KaiTi",serif;font-size:22px;font-weight:400;letter-spacing:.14em}
+.tu-hex .sub{font-size:11.5px;letter-spacing:.18em;color:var(--ink-3)}
+.tuyi{width:min(100%,620px);display:flex;flex-direction:column;gap:8px}
+.tuyi h4{margin:0;font-family:"Kaiti SC","STKaiti","KaiTi",serif;font-size:14px;font-weight:400;letter-spacing:.22em;color:var(--cinnabar)}
+.tuyi p{margin:0;font-size:14.5px;line-height:2;color:var(--ink-2);text-indent:2em}
+.tu-guaci{font-size:13px;line-height:1.9;color:var(--ink-3);letter-spacing:.04em}
+/* 全解 */
+.full-body{display:flex;flex-direction:column;gap:20px}
+.full-left{display:flex;flex-direction:column;gap:12px;align-items:center}
+.full-left .hexsvg{fill:var(--ink)}
+.full-left h3{margin:0;font-family:"Kaiti SC","STKaiti","KaiTi",serif;font-size:24px;font-weight:400;letter-spacing:.14em;text-align:center}
+.full-right{display:flex;flex-direction:column;gap:14px}
+.full-right section{border-top:1px solid var(--line);padding-top:11px}
+.full-right h4{margin:0 0 7px;font-family:"Kaiti SC","STKaiti","KaiTi",serif;font-size:13.5px;font-weight:400;letter-spacing:.24em;color:var(--cinnabar)}
+.full-right p{margin:0;font-size:14px;line-height:1.95;color:var(--ink-2);text-indent:2em}
+.yao-block{margin-top:4px}
+.yao-line{font-size:13px;line-height:1.9;color:var(--ink-2);letter-spacing:.02em;display:flex;gap:8px}
+.yao-line b{color:var(--cinnabar);font-weight:400;flex:0 0 auto;font-size:12.5px;letter-spacing:.06em}
+/* ===== 弹窗 ===== */
+.modal{position:fixed;inset:0;z-index:60;display:flex;align-items:center;justify-content:center;padding:16px}
+.modal[hidden]{display:none}
+.modal-mask{position:absolute;inset:0;background:rgba(23,20,16,.42);backdrop-filter:blur(2px)}
+.modal-card{position:relative;z-index:1;width:min(100%,560px);max-height:86vh;overflow:auto;background:var(--paper-hi);
+  border:1px solid var(--ink);box-shadow:0 30px 60px -30px rgba(20,17,13,.8);padding:18px 16px 16px}
+.modal-card h3{margin:0 0 4px;font-family:"Kaiti SC","STKaiti","KaiTi",serif;font-size:19px;font-weight:400;letter-spacing:.14em}
+.modal-hint{margin:0 0 12px;font-size:12.5px;color:var(--ink-3);line-height:1.7}
+.modal-card textarea{width:100%;resize:vertical;background:transparent;border:1px solid var(--line);
+  padding:10px;font-family:inherit;font-size:16px;line-height:1.7;color:var(--ink);border-radius:2px}
+.modal-card textarea:focus{outline:none;border-color:var(--ink-2)}
+.modal-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:11px}
+.modal-actions .btn{min-width:88px;padding-left:12px;padding-right:12px}
+.result{margin-top:14px;border-top:1px solid var(--line);padding-top:12px;display:flex;flex-direction:column;gap:10px}
+.result h5{margin:0;font-family:"Kaiti SC","STKaiti","KaiTi",serif;font-size:12.5px;font-weight:400;letter-spacing:.2em;color:var(--cinnabar)}
+.result p{margin:0;font-size:13.5px;line-height:1.95;color:var(--ink-2)}
+.result .q-echo{font-size:13px;color:var(--ink-3);border-left:2px solid var(--line);padding-left:9px;line-height:1.7}
+/* ===== 页脚 ===== */
+.foot{margin-top:auto;padding-top:24px;display:flex;flex-direction:column;align-items:center;gap:6px}
+.foot p{margin:0;font-size:11px;color:var(--ink-3);letter-spacing:.08em;text-align:center;line-height:1.8}
+/* ===== 桌面 ===== */
+@media (min-width:768px){
+  .stage{padding:26px 40px 48px}
+  .brand{font-size:23px;padding:5px 11px 5px 13px}
+  .slogan{font-size:16.5px;margin-top:10px}
+  .cover{gap:28px;padding:26px 0 10px}
+  .hex-title h1{font-size:38px}
+  .hex-title p{font-size:12.5px}
+  .pad-row{width:min(100%,470px);gap:12px}
+  .btn{font-size:15.5px;padding:12px 6px}
+  .pads{padding:26px 0 12px}
+  .gua-grid{grid-template-columns:repeat(8,minmax(0,1fr));gap:10px}
+  .cell{min-height:104px}
+  .full-body{flex-direction:row;align-items:flex-start;gap:34px}
+  .full-left{flex:0 0 230px;position:sticky;top:24px}
+  .full-right{flex:1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px;align-items:start}
+  .full-right section{border-top:1px solid var(--line);padding-top:12px}
+  .tu-body{gap:24px}
+  .page-head h2{font-size:23px}
+}
+@media (min-width:1100px){
+  .hex-title h1{font-size:42px}
+}
+@media (max-width:380px){
+  .hex-title h1{font-size:26px}
+  .btn{font-size:13.5px;letter-spacing:.12em}
+  .gua-grid{gap:6px}
+  .cell{min-height:88px;padding:9px 2px 7px}
+  .cell .cell-name{font-size:12px}
+}
+.hex-img .hexsvg{width:min(60vw,200px);height:auto}
+.tu-hex .hexsvg{width:min(54vw,180px);height:auto}
+.full-left .hexsvg{width:min(56vw,170px);height:auto}
+.cell .hexsvg{width:46px;height:auto}
+@media (min-width:768px){
+  .hex-img .hexsvg{width:230px}
+  .tu-hex .hexsvg{width:200px}
+  .full-left .hexsvg{width:186px}
+  .cell .hexsvg{width:52px}
+}
+@media (prefers-reduced-motion:reduce){
+  .view{animation:none}
+  .hex-img.rolling{filter:none}
+}
+</style>
+</head>
+<body>
+<div class="curtain curtain-l" aria-hidden="true"></div>
+<div class="curtain curtain-r" aria-hidden="true"></div>
+
+<div class="stage">
+  <header class="head">
+    <a class="brand" href="#/home">卜<span>易</span></a>
+    <div class="head-meta"><span id="headIdx">第一卦</span><span class="dot">·</span><span id="headName">乾为天</span></div>
+  </header>
+  <p class="slogan">心存敬畏，卜以决疑，不疑何卜</p>
+
+  <!-- ===== 视图：首页 ===== -->
+  <main class="view on" id="view-home">
+    <div class="cover">
+      <div class="hex-stage">
+        <div class="hex-img" id="hexImg"></div>
+        <div class="hex-title">
+          <h1 id="hexName">乾为天</h1>
+          <p id="hexSub">第一卦 · 上乾下乾</p>
+        </div>
+      </div>
+
+      <figure class="renjiandao">
+        <div class="fig-frame" id="homeFig"></div>
+        <figcaption id="homeCap">人间道图 · 乾</figcaption>
+      </figure>
+    </div>
+
+    <nav class="pads" aria-label="卦象操作">
+      <div class="pad-row">
+        <button class="btn" type="button" data-act="all">全卦</button>
+        <button class="btn" type="button" data-act="divine">解卦</button>
+        <button class="btn" type="button" data-act="tu">图解</button>
+      </div>
+      <div class="pad-row">
+        <button class="btn ghost" type="button" data-act="prev">上一卦</button>
+        <button class="btn key" type="button" data-act="daily">每日一卦</button>
+        <button class="btn ghost" type="button" data-act="next">下一卦</button>
+      </div>
+    </nav>
+  </main>
+
+  <!-- ===== 视图：全卦 ===== -->
+  <main class="view" id="view-all">
+    <div class="page">
+      <div class="page-head">
+        <a class="back" href="#/home">← 返回首页</a>
+        <h2>全卦 · 六十四</h2>
+      </div>
+      <div class="gua-grid" id="guaGrid"></div>
+    </div>
+  </main>
+
+  <!-- ===== 视图：图解 ===== -->
+  <main class="view" id="view-tu">
+    <div class="page">
+      <div class="page-head">
+        <a class="back" href="#/home">← 返回首页</a>
+        <h2 id="tuHead">图解</h2>
+      </div>
+      <div class="tu-body">
+        <div class="tu-hex">
+          <div id="tuHex"></div>
+          <h3 id="tuName">乾为天</h3>
+          <span class="sub" id="tuSub">第一卦 · 上乾下乾</span>
+        </div>
+        <figure class="renjiandao">
+          <div class="fig-frame" id="tuFig"></div>
+          <figcaption id="tuCap">人间道图</figcaption>
+        </figure>
+        <div class="tuyi">
+          <h4>图意</h4>
+          <p id="tuYi"></p>
+          <p class="tu-guaci" id="tuGuaci"></p>
+        </div>
+        <div class="pad-row">
+          <button class="btn" type="button" data-act="all">全卦</button>
+          <button class="btn key" type="button" data-act="full">全解</button>
+          <button class="btn ghost" type="button" data-act="divine">解卦</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ===== 视图：全解 ===== -->
+  <main class="view" id="view-full">
+    <div class="page">
+      <div class="page-head">
+        <a class="back" href="#/home">← 返回首页</a>
+        <h2 id="fullHead">全解</h2>
+      </div>
+      <p class="note" id="fullNote">此处三栏文字为依卦辞爻辞推演的意解，非倪师原文；导入《人间道》《阳宅》整理文本后按卦替换。</p>
+      <div class="full-body">
+        <div class="full-left">
+          <div id="fullHex"></div>
+          <h3 id="fullName">乾为天</h3>
+          <div class="fig-frame" id="fullFig"></div>
+          <p class="tu-guaci" id="fullGuaci"></p>
+        </div>
+        <div class="full-right">
+          <section>
+            <h4>人间道</h4>
+            <p id="fullR"></p>
+          </section>
+          <section>
+            <h4>阳宅学</h4>
+            <p id="fullZ"></p>
+          </section>
+          <section>
+            <h4>案例</h4>
+            <p id="fullC"></p>
+          </section>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="foot">
+    <p>卜以决疑，不疑何卜 —— 卦爻经文出《周易》，意解为本项目推演，供参证，不作吉凶承诺。</p>
+    <p>心存敬畏 · 卜易</p>
+  </footer>
+</div>
+
+<!-- ===== 解卦弹窗 ===== -->
+<div class="modal" id="divineModal" hidden>
+  <div class="modal-mask" data-act="close"></div>
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="dmTitle">
+    <h3 id="dmTitle">解卦</h3>
+    <p class="modal-hint">可写下所问之事；不写，则只解卦辞爻辞。</p>
+    <textarea id="dmQ" rows="3" placeholder="所问之事（可不填）"></textarea>
+    <div class="modal-actions">
+      <button class="btn ghost" type="button" data-act="close">取消</button>
+      <button class="btn key" type="button" data-act="solve">解</button>
+    </div>
+    <div class="result" id="dmResult" hidden></div>
+  </div>
+</div>
+
+<script>
+/* ===== 六十四卦数据 ===== */
+const YI = [/* 由 tools/build.py 生成，勿手改 */
+{n:1,f:"乾为天",
+ x:"元亨，利贞。",
+ y:["初九：潜龙，勿用。","九二：见龙在田，利见大人。","九三：君子终日乾乾，夕惕若，厉，无咎。","九四：或跃在渊，无咎。","九五：飞龙在天，利见大人。","上九：亢龙有悔。","用九：见群龙无首，吉。"],
+ r:"乾为纯阳，天行至健。人间道取自强不息：人之立身不在依附，而在日日自砺。潜、见、惕、跃、飞、亢六境，最怕亢龙，得意而不知收。",
+ z:"乾位在西北，主家中父辈与主事者。此卦示宅形端方、尊长当位、事由家主定夺之局；西北宜高宜实，忌低陷缺损，否则家有议而无断。",
+ c:"一位年轻主管初上任，事事亲断，属下不敢言。半年后项目受挫，才懂见龙在田要的是露才不露势；改为把决断交给流程、自己只定标准，团队才立住。"},
+{n:2,f:"坤为地",
+ x:"元亨，利牝马之贞。君子有攸往，先迷后得主，利西南得朋，东北丧朋。安贞，吉。",
+ y:["初六：履霜，坚冰至。","六二：直，方，大，不习无不利。","六三：含章可贞。或从王事，无成有终。","六四：括囊；无咎，无誉。","六五：黄裳，元吉。","上六：龙战于野，其血玄黄。","用六：利永贞。"],
+ r:"坤为纯阴，厚德载物：不争先、不居功，以承顺成事。牝马之贞，是有方向的柔顺——顺道不顺人；退让亦有底线之争。",
+ z:"坤位在西南，主母亲、主内。西南宜平阔安静，忌尖角冲射；此卦示主母持家、以柔御众，凡事缓而后定。",
+ c:"一位妻子里外操持，从不与人争，久被视作当然，积怨成疾。后学括囊：该收则收、该言则言，家反而顺了。"},
+{n:3,f:"水雷屯",
+ x:"元亨，利贞，勿用有攸往，利建侯。",
+ y:["初九：磐桓；利居贞，利建侯。","六二：屯如邅如，乘马班如。匪寇婚媾，女子贞不字，十年乃字。","六三：即鹿无虞，惟入于林中，君子几不如舍，往吝。","六四：乘马班如，求婚媾，往吉，无不利。","九五：屯其膏，小贞吉，大贞凶。","上六：乘马班如，泣血涟如。"],
+ r:"屯者草木初生，艰难而有生机。创业之初处处是阻，不可急进，宜先建班底、后图扩张；有马而徘徊不进，此时最忌乱投。",
+ z:"屯为初难之局：屋成而人未聚，不宜急迁。宜择可靠之人共处一宅，先立规矩，后议规模。",
+ c:"小店开张客人稀少，店主急着打折揽客，越打越薄。后改为收整门面、记住每位熟客，半年才见人气——屯卦要的是等得住。"},
+{n:4,f:"山水蒙",
+ x:"亨。匪我求童蒙，童蒙求我。初筮告，再三渎，渎则不告。利贞。",
+ y:["初六：发蒙，利用刑人，用说桎梏，以往吝。","九二：包蒙吉；纳妇吉；子克家。","六三：勿用取女；见金夫，不有躬，无攸利。","六四：困蒙，吝。","六五：童蒙，吉。","上九：击蒙；不利为寇，利御寇。"],
+ r:"蒙为蒙昧未开。学在问，问在诚：同一件事反复求安慰，即是渎。为师者择人而教，不启不诚之人。",
+ z:"蒙主幼与教。宜设读书之所于安静处，光明而不过亮；长上要有耐心，勿鞭扑过急，勿放任不问。",
+ c:"学徒第三遍问同一件事，师父闭口不答。学徒说不敢做，师父说：你已知道，只是不敢认。当日下午他便上手做成了。"},
+{n:5,f:"水天需",
+ x:"有孚，光亨，贞吉。利涉大川。",
+ y:["初九：需于郊。利用恒，无咎。","九二：需于沙。小有言，终吉。","九三：需于泥，致寇至。","六四：需于血，出自穴。","九五：需于酒食，贞吉。","上六：入于穴，有不速之客三人来，敬之终吉。"],
+ r:"需是等待，而等待中有备。需于郊、沙、泥、血，是逐步走近险地的过程；真正的需不是空等，而是把粮备好、把身养住，候时自来。",
+ z:"需为待时之局：宜守成，不宜此时大兴土木；宅中宜水气调和、米粮充足。财未聚而人不慌，先养后发。",
+ c:"有人求职不成，日日焦躁。友人劝他趁闲学一门手艺；一年后旧岗重开，他带着手艺回去，职位反升。"},
+{n:6,f:"天水讼",
+ x:"有孚，窒。惕中吉。终凶。利见大人，不利涉大川。",
+ y:["初六：不永所事，小有言，终吉。","九二：不克讼，归而逋，其邑人三百户，无眚。","六三：食旧德，贞厉，终吉，或从王事，无成。","九四：不克讼，复即命渝，安贞吉。","九五：讼元吉。","上九：或锡之鞶带，终朝三褫之。"],
+ r:"讼是争。有孚而窒，心里有实据却说不出；争到极处两败，故曰终凶。能止讼者，懂得在初起时就退一步。",
+ z:"讼主口舌、官非、争产。忌门向相冲、水火同宫；家中宜立明规矩、分权责，不使是非无主。",
+ c:"兄弟为祖屋争执三年，各请律师。老母只说一句：卖了，钱分了，别再吵。事毕反而能同桌吃饭。"},
+{n:7,f:"地水师",
+ x:"贞，丈人，吉无咎。",
+ y:["初六：师出以律，否臧凶。","九二：在师中吉，无咎，王三锡命。","六三：师或舆尸，凶。","六四：师左次，无咎。","六五：田有禽，利执言，无咎。长子帅师，弟子舆尸，贞凶。","上六：大君有命，开国承家，小人勿用。"],
+ r:"师是众、是兵。师出以律，无律之众是祸。用人如用兵，须有老成持重者居中、锐进者听令；用人不当，舆尸而归。",
+ z:"师主众与统。一宅人口多者，最忌主事无人、令出多门；宜定中位、明尊卑，家长居中，众人各安其位。",
+ c:"一支施工队换了三个带队，工期一拖再拖。老工头回来只做一件事：每日开工点人定活，收工核数。三个月完工。"},
+{n:8,f:"水地比",
+ x:"吉。原筮元永贞，无咎。不宁方来，后夫凶。",
+ y:["初六：有孚，比之，无咎。有孚盈缶，终来有它吉。","六二：比之自内，贞吉。","六三：比之匪人。","六四：外比之，贞吉。","九五：显比，王用三驱，失前禽。邑人不诫，吉。","上六：比之无首，凶。"],
+ r:"比是亲辅。择人而比，比之自内则真，比之匪人则祸。先看此人德行能不能长久，再谈亲近；迟来者难入其群。",
+ z:"比主邻与辅。阳宅重邻，左右四邻和顺则家安；宅宜与邻里门户相望、往来有礼，不相隔绝。",
+ c:"新搬来的人不与四邻往来，自以为清静；一场急病竟无人知晓。此后他每月与邻居换一次菜，才算出得了门。"},
+{n:9,f:"风天小畜",
+ x:"亨。密云不雨，自我西郊。",
+ y:["初九：复自道，何其咎，吉。","九二：牵复，吉。","九三：舆说辐，夫妻反目。","六四：有孚，血去惕出，无咎。","九五：有孚挛如，富以其邻。","上九：既雨既处，尚德载，妇贞厉。月几望，君子征凶。"],
+ r:"小畜是以小蓄大，力尚未足。密云不雨，云已聚而雨未落，是可成而未成之时；宜积不宜发，畜到极处自然落雨。",
+ z:"小畜主蓄。家业初起，宜积粮积德，不宜铺张；宅示小而能容、蓄而不露之形，忌虚张门面、借债撑场面。",
+ c:"有人收入不薄，却月月见底。改成每月先存一成再花，两年竟付了首付——小畜不是小气，是先把水蓄住。"},
+{n:10,f:"天泽履",
+ x:"履虎尾，不咥人，亨。",
+ y:["初九：素履，往无咎。","九二：履道坦坦，幽人贞吉。","六三：眇能视，跛能履，履虎尾，咥人，凶。武人为于大君。","九四：履虎尾，愬愬，终吉。","九五：夬履，贞厉。","上九：视履考祥，其旋元吉。"],
+ r:"履是践履。履虎尾不咥人，靠的是礼与分寸：处强邻、事上位，脚下要有格，进退要有度。恃勇而无礼，必凶。",
+ z:"履主行与礼。阳宅重门径，入门之路宜直而不冲、明而不露；门第有礼，则家中少祸端。",
+ c:"新人进一家老牌公司，先记下每人的习惯与禁忌，三个月不出错也不多言。转正评议时，老员工一致同意留他。"},
+{n:11,f:"地天泰",
+ x:"小往大来，吉亨。",
+ y:["初九：拔茅茹，以其汇，征吉。","九二：包荒，用冯河，不遐遗，朋亡，得尚于中行。","九三：无平不陂，无往不复，艰贞无咎。勿恤其孚，于食有福。","六四：翩翩，不富，以其邻，不戒以孚。","六五：帝乙归妹，以祉元吉。","上六：城复于隍，勿用师。自邑告命，贞吝。"],
+ r:"泰是通。小往大来，小的舍出去，大的才进来。泰不是一味顺，而是上下交而志同；通到极处便是转，安泰之时最忌懈怠。",
+ z:"泰为交之局：宅最喜上下通气、明暗得宜。此卦示家道通泰，长上肯俯听、晚辈肯上进；宜此时议大事、结亲、迁居。",
+ c:"一家人十年不和，只因长辈从不听晚辈的话。一次家宴，老人让孙子先说自己想做什么；那顿饭之后，事情慢慢都通了。"},
+{n:12,f:"天地否",
+ x:"否之匪人，不利君子贞，大往小来。",
+ y:["初六：拔茅茹，以其汇，贞吉亨。","六二：包承。小人吉，大人否，亨。","六三：包羞。","九四：有命，无咎，畴离祉。","九五：休否，大人吉。其亡其亡，系于苞桑。","上九：倾否，先否后喜。"],
+ r:"否是塞。上不交下，下不达上，故否。处否之时不争不躁，俭德避难；休否倾否须等一个转机，先否后喜，是肯熬的人才见得到。",
+ z:"否主隔。阳宅忌门户闭塞、光线不通，家人各据一室、言语不通；宜开门通气、聚食共处，以待气转。",
+ c:"家中兄弟各住一层，一年说不上几句话。后来只定一条：晚饭同桌，风雨不改。两年之后，连旧怨都淡了。"},
+{n:13,f:"天火同人",
+ x:"同人于野，亨。利涉大川，利君子贞。",
+ y:["初九：同人于门，无咎。","六二：同人于宗，吝。","九三：伏戎于莽，升其高陵，三岁不兴。","九四：乘其墉，弗克攻，吉。","九五：同人，先号咷而后笑。大师克相遇。","上九：同人于郊，无悔。"],
+ r:"同人是与人同。同人于野，在开阔处与人相合，不结私党；共事之道在公不在私。以私心相图者，三岁不兴。",
+ z:"同人主合。宅宜共处而不相碍，堂室开阔则人心亦开；此卦示合伙、共事、结社，宜明约在前、小利不计。",
+ c:"三个朋友合伙开店，头件事不是分股，而是写清谁管钱、谁管货。后来有人想走，账一算清，散得体面。"},
+{n:14,f:"火天大有",
+ x:"元亨。",
+ y:["初九：无交害，匪咎，艰则无咎。","九二：大车以载，有攸往，无咎。","九三：公用亨于天子，小人弗克。","九四：匪其彭，无咎。","六五：厥孚交如，威如；吉。","上九：自天祐之，吉无不利。"],
+ r:"大有是所有大。柔居尊位，众阳归之：不以力服人，而以德受人。盛时之道在不炫耀、不膨胀；天所祐的是谦，不是富。",
+ z:"大有主丰。宅示家业丰盛、明堂开阔；宜富而不骄，宅虽大而门不欺人，厅堂亮而卧房藏，忌屋大而德薄。",
+ c:"一位老板生意最好的那年，把办公室从顶层搬到一楼，逢人先让路。他说怕自己看不见路了。此后十年未垮。"},
+{n:15,f:"地山谦",
+ x:"亨，君子有终。",
+ y:["初六：谦谦君子，用涉大川，吉。","六二：鸣谦，贞吉。","九三：劳谦，君子有终，吉。","六四：无不利，㧑谦。","六五：不富，以其邻，利用侵伐，无不利。","上六：鸣谦，利用行师，征邑国。"],
+ r:"谦是有而不居。山在地下，高者自抑，故六爻皆吉——六十四卦中唯谦无凶。劳谦君子，有功而不自伐；谦不是低，是把高藏住。",
+ z:"谦主藏。宅宜高而不露、实而不张：后高前低、根基厚实而门面朴素，家中长辈有功而不居功。",
+ c:"一位技术最好的人从不抢讲台，每次汇报都把名字写在最后。三年后公司重组，众人推他——不是因为他最会说，是因为他从未踩过谁。"},
+{n:16,f:"雷地豫",
+ x:"利建侯，行师。",
+ y:["初六：鸣豫，凶。","六二：介于石，不终日，贞吉。","六三：盱豫，悔。迟有悔。","九四：由豫，大有得。勿疑。朋盍簪。","六五：贞疾，恒不死。","上六：冥豫，成有渝，无咎。"],
+ r:"豫是顺而动。顺理而动为吉豫，享乐懈怠为逸豫，沉溺不返为冥豫。介于石，不终日：真正的从容是心里有准绳，不随众喜乐。",
+ z:"豫主动与乐。宅宜动线顺畅、器物不喧；此卦示家有喜庆，然忌纵乐废事，宜先设节度，事到即收。",
+ c:"有人中了笔小奖，请客三日，牌桌不停。半年后连本带利赔光。他说：当时只觉得高兴，没想过停。"},
+{n:17,f:"泽雷随",
+ x:"元亨利贞，无咎。",
+ y:["初九：官有渝，贞吉。出门交有功。","六二：系小子，失丈夫。","六三：系丈夫，失小子。随有求得，利居贞。","九四：随有获，贞凶。有孚在道，以明，何咎。","九五：孚于嘉，吉。","上六：拘系之，乃从维之。王用亨于西山。"],
+ r:"随是随从。随时、随人、随势，要随得正——随有求得而贞凶，是贪得而失守。出门交有功：走出去，比守在原处更易成事。",
+ z:"随主从。宅中人口与主事之位宜顺，不宜强逆；此卦示随人随势之局，家事宜顺长上之意，然不可随其非。",
+ c:"一人跳槽进了更好的平台，头半年处处跟着老同事学，从不急着表现。一年后他成了最懂业务的人。"},
+{n:18,f:"山风蛊",
+ x:"元亨，利涉大川。先甲三日，后甲三日。",
+ y:["初六：干父之蛊，有子，考无咎，厉终吉。","九二：干母之蛊，不可贞。","九三：干父之蛊，小有悔，无大咎。","六四：裕父之蛊，往见吝。","六五：干父之蛊，用誉。","上九：不事王侯，高尚其事。"],
+ r:"蛊是器皿久不用而生虫，事久不理而生弊。干父之蛊，是替前人收拾残局：治蛊须先甲三日、后甲三日，前后都想清楚再动手。",
+ z:"蛊主弊与修。宅久不治则腐：屋漏、渠塞、物乱；此卦示修旧之局，宜先清后改，不可一边住一边乱拆。",
+ c:"一间老铺，账乱货乱，接手的儿子先花三个月清账清仓，才谈得上改。他说：不清完，怎么改都是乱的。"},
+{n:19,f:"地泽临",
+ x:"元，亨，利，贞。至于八月有凶。",
+ y:["初九：咸临，贞吉。","九二：咸临，吉无不利。","六三：甘临，无攸利。既忧之，无咎。","六四：至临，无咎。","六五：知临，大君之宜，吉。","上六：敦临，吉无咎。"],
+ r:"临是居高临下而近人。临民以德不以威：咸临、甘临、至临、知临、敦临五种临法，唯敦临最厚，故吉无咎；八月有凶，是盛极当警。",
+ z:"临主临与抚。宅中长上临下，宜亲不宜威；此卦示长辈亲临、照拂晚辈之局，宜多走动多问，不使上下疏远。",
+ c:"一位班长管人从不训话，只在每人做事时站在旁边看，遇错递手而不是指手。组里没人怕他，但没人敢糊弄他。"},
+{n:20,f:"风地观",
+ x:"盥而不荐，有孚颙若。",
+ y:["初六：童观，小人无咎，君子吝。","六二：闚观，利女贞。","六三：观我生，进退。","六四：观国之光，利用宾于王。","九五：观我生，君子无咎。","上九：观其生，君子无咎。"],
+ r:"观是观仰。盥而不荐，洗了手却不献祭——心诚在敬，不在形式。观我生、观国之光：先看自己，再看他处；只见人不见己，便是童观。",
+ z:"观主观望与示人。宅宜有可望之高处：厅堂正、门面清；此卦示家风为人所观，宜正其表，不使外人见其乱。",
+ c:"一位父亲想教儿子读书，自己却整晚刷手机。后来他把手机放下，每晚坐儿子旁边看书，儿子成绩是自己好起来的。"},
+{n:21,f:"火雷噬嗑",
+ x:"亨。利用狱。",
+ y:["初九：屦校灭趾，无咎。","六二：噬肤灭鼻，无咎。","六三：噬腊肉，遇毒；小吝，无咎。","九四：噬乾胏，得金矢，利艰贞，吉。","六五：噬乾肉，得黄金，贞厉，无咎。","上九：何校灭耳，凶。"],
+ r:"噬嗑是咬合。口中有物，咬断才通；事有梗阻，须断然去之。利用狱：是非曲直要辨明，不可含混；咬得太浅则毒存，咬得准才吉。",
+ z:"噬嗑主断与罚。家中规矩不明则生梗；此卦示立规明罚之局，宜先定是非标准，再论赏罚，不使亲疏乱法。",
+ c:"一家小店，伙计偷拿货款，老板先是含混，越管越乱。后来把账贴在墙上、出入当面点清，人心反而稳了。"},
+{n:22,f:"山火贲",
+ x:"亨。小利有攸往。",
+ y:["初九：贲其趾，舍车而徒。","六二：贲其须。","九三：贲如濡如，永贞吉。","六四：贲如皤如，白马翰如，匪寇婚媾。","六五：贲于丘园，束帛戋戋，吝，终吉。","上九：白贲，无咎。"],
+ r:"贲是文饰。文以载质，饰不掩真；白贲无咎，最好看的装饰是干净。小利有攸往：装点门面可以，靠装点成事则不可。",
+ z:"贲主饰。宅宜整而不华：门面修得干净，不必金碧；此卦示修饰之局，忌浮华压本，忌借外饰掩内虚。",
+ c:"有人借钱翻新客厅招待客人，屋里漂亮了，账却压得喘不过气。后来只留白墙木桌，客人来得更多——白贲。"},
+{n:23,f:"山地剥",
+ x:"不利有攸往。",
+ y:["初六：剥床以足，蔑贞凶。","六二：剥床以辨，蔑贞凶。","六三：剥之，无咎。","六四：剥床以肤，凶。","六五：贯鱼，以宫人宠，无不利。","上九：硕果不食，君子得舆，小人剥庐。"],
+ r:"剥是剥落。五阴在下剥一阳，势不可挡，不利有攸往。此时守静不动，护住最后一点根本——硕果不食，留种才有来年。",
+ z:"剥主损。宅之剥，是墙颓、木朽、人不聚；此卦示衰退之局，宜止损不宜扩张，护住主体，等待时转。",
+ c:"一位老板在生意下滑时仍扩店，越扩越空。后来关掉三家店，只留一间老铺，两年后又活了过来。"},
+{n:24,f:"地雷复",
+ x:"亨。出入无疾，朋来无咎。反复其道，七日来复，利有攸往。",
+ y:["初九：不远复，无祗悔，元吉。","六二：休复，吉。","六三：频复，厉无咎。","六四：中行独复。","六五：敦复，无悔。","上六：迷复，凶，有灾眚。用行师，终有大败，以其国君，凶；至于十年，不克征。"],
+ r:"复是回返。一阳生于地下，七日来复，天道循环。不远复，是错得不远就回头，无祗悔；迷复凶，是错得久了还不认。",
+ z:"复主回。宅气断绝者宜重通：重整门径、复聚人气；此卦示复起之局，宜早改不宜拖，宜小改不宜推倒重来。",
+ c:"一个人荒废了三年，重新拿起书时只定每天一页。他说：不远复，不跟自己算旧账，只算今天这一页。"},
+{n:25,f:"天雷无妄",
+ x:"元亨，利贞。其匪正有眚，不利有攸往。",
+ y:["初九：无妄，往吉。","六二：不耕获，不菑畬，则利有攸往。","六三：无妄之灾，或系之牛，行人之得，邑人之灾。","九四：可贞，无咎。","九五：无妄之疾，勿药有喜。","上九：无妄，行有眚，无攸利。"],
+ r:"无妄是不妄为。天雷震动，动而有节。无妄之灾——不是你的错也会砸下来；此时勿药有喜，不妄动、不乱治，反而无事。",
+ z:"无妄主正。宅宜守正，不迁不拆不动其本；此卦示无故之扰，宜静守，不宜听信闲言而大动土木。",
+ c:"一家人听信风水师的话要拆墙改门，拆完反而不顺。老匠人来看，只说一句：原来的门没错，是你心先乱了。"},
+{n:26,f:"山天大畜",
+ x:"利贞，不家食吉，利涉大川。",
+ y:["初九：有厉利已。","九二：舆说輹。","九三：良马逐，利艰贞。曰闲舆卫，利有攸往。","六四：童牛之牿，元吉。","六五：豮豕之牙，吉。","上九：何天之衢，亨。"],
+ r:"大畜是所蓄者大。止而不止，蓄极而通；良马逐、闲舆卫，是先把车马备好再走远路。不家食吉：真本事要出去用，不能只囤在家里。",
+ z:"大畜主蓄大。宅宜有藏：仓廪、书室、储器皆宜；此卦示积厚之局，蓄而不露，待时而发，忌有蓄而无用。",
+ c:"一位工程师把十年做的项目都整理成文档。公司换人时，新团队靠这批文档接住了所有项目，他才被看见。"},
+{n:27,f:"山雷颐",
+ x:"贞吉。观颐，自求口实。",
+ y:["初九：舍尔灵龟，观我朵颐，凶。","六二：颠颐，拂经，于丘颐，征凶。","六三：拂颐，贞凶，十年勿用，无攸利。","六四：颠颐，吉，虎视眈眈，其欲逐逐，无咎。","六五：拂经，居贞吉，不可涉大川。","上九：由颐，厉吉，利涉大川。"],
+ r:"颐是养。观颐，看一个人养什么、被谁养。自求口实：养要靠自己挣，不靠人喂；舍自家灵龟而去羡人家的饭，是失本。",
+ z:"颐主养。宅之颐在饮食与教养：厨房净、饭桌齐、书桌正；此卦示养人之局，宜养正不养欲。",
+ c:"一位母亲省下自己的饭钱给孩子买零食，孩子反倒挑食体弱。后来饭桌上一家人吃一样的饭，孩子才慢慢壮实。"},
+{n:28,f:"泽风大过",
+ x:"栋桡，利有攸往，亨。",
+ y:["初六：藉用白茅，无咎。","九二：枯杨生稊，老夫得其女妻，无不利。","九三：栋桡，凶。","九四：栋隆，吉；有它吝。","九五：枯杨生华，老妇得士夫，无咎无誉。","上六：过涉灭顶，凶，无咎。"],
+ r:"大过是过得太多。栋桡，梁太重而将折；此时当断则断，不可再添。枯杨生稊是死中求生，过涉灭顶是明知不可而强渡。",
+ z:"大过主过。宅之过，是屋大而基薄、人多而财寡；此卦示负荷过重，宜减不宜加，宜修基不宜再起楼。",
+ c:"一位父亲为儿子买房背了三份债，硬撑两年，家里先垮。后来卖了那套房，租着住，人都缓过来了。"},
+{n:29,f:"坎为水",
+ x:"习坎，有孚，维心亨，行有尚。",
+ y:["初六：习坎，入于坎窞，凶。","九二：坎有险，求小得。","六三：来之坎坎，险且枕，入于坎窞，勿用。","六四：樽酒簋贰，用缶，纳约自牖，终无咎。","九五：坎不盈，祗既平，无咎。","上六：系用徽𬙊，寘于丛棘，三岁不得，凶。"],
+ r:"坎是险，重重之险。习坎——把险当作日常来练，心才亨；有孚维心，心里有个定处，险中才不散。险中不求大胜，先求一步。",
+ z:"坎主险与陷。宅忌低洼积水、门对沟渠；此卦示处险之局，宜先出险地，不居高危而不自觉。",
+ c:"有人陷在债务里，天天想一把翻身。后来只做一件事：每月还一点、记账、不再借新。三年出坑。"},
+{n:30,f:"离为火",
+ x:"利贞，亨。畜牝牛，吉。",
+ y:["初九：履错然，敬之无咎。","六二：黄离，元吉。","九三：日昃之离，不鼓缶而歌，则大耋之嗟，凶。","九四：突如其来如，焚如，死如，弃如。","六五：出涕沱若，戚嗟若，吉。","上九：王用出征，有嘉折首，获匪其丑，无咎。"],
+ r:"离是火，是附丽。火无自体，附着于物而明；人也靠所附而显。畜牝牛吉：附得柔顺守正，才长久。日昃之离，是光到极处即成嗟。",
+ z:"离主明与附。宅宜明亮而不燥：厅堂不暗，灯火不过；此卦示依附之局，宜择所附，忌附非其人。",
+ c:"一个人换了四份工作都不顺，后来才明白不是平台不行，是自己每次都急着抢光。改为先照亮别人，路才开。"},
+{n:31,f:"泽山咸",
+ x:"咸，亨，利贞，取女吉。",
+ y:["初六：咸其拇。","六二：咸其腓，凶，居吉。","九三：咸其股，执其随，往吝。","九四：贞吉，悔亡，憧憧往来，朋从尔思。","九五：咸其脢，无悔。","上六：咸其辅颊舌。"],
+ r:"咸是感应。少男少女相感，动在无心。咸其拇、腓、股、脢，感之深浅不同；憧憧往来，是心里乱想，反而感不通。以诚感，不以术感。",
+ z:"咸主感与合。宅中夫妻、亲子之感应相通；此卦示感应之局，宜常常交心，忌各怀心思而表面无事。",
+ c:"一对夫妻冷战半年，谁也不开口。后来妻子只说了一句自己的难受，没说对方的错，两人当夜就通了。"},
+{n:32,f:"雷风恒",
+ x:"亨，无咎，利贞，利有攸往。",
+ y:["初六：浚恒，贞凶，无攸利。","九二：悔亡。","九三：不恒其德，或承之羞，贞吝。","九四：田无禽。","六五：恒其德，贞，妇人吉，夫子凶。","上六：振恒，凶。"],
+ r:"恒是长久。亨无咎，利有攸往，然须有守：不恒其德，或承之羞；浚恒求深太急、振恒动而不定，皆非真恒。恒是把对的事反复做。",
+ z:"恒主久。宅宜定：居不宜频迁，规不宜频改；此卦示守恒之局，家风贵在有常，不在有奇。",
+ c:"一位学徒练字，师父只让他写永字，写了三年。三年后他写别的字，笔笔都有骨。师父说：恒就是这个。"},
+{n:33,f:"天山遁",
+ x:"亨，小利贞。",
+ y:["初六：遯尾，厉，勿用有攸往。","六二：执之用黄牛之革，莫之胜说。","九三：系遯，有疾厉，畜臣妾吉。","九四：好遯，君子吉，小人否。","九五：嘉遯，贞吉。","上九：肥遯，无不利。"],
+ r:"遁是退避。天山遁，君子以远小人，不恶而严。遁得及时为上：遯尾则危，系遯则疾，唯肥遯——退得从容，无所不利。",
+ z:"遁主退。宅之遁，是择地而居、择邻而处；此卦示退避之局，宜早退不宜勉强，退得干净才叫退。",
+ c:"一位合伙人发现账目被人动手脚，没有当场撕破，先退出、留证据，半年后事情自然清楚。他说：退，也是走一步棋。"},
+{n:34,f:"雷天大壮",
+ x:"利贞。",
+ y:["初九：壮于趾，征凶，有孚。","九二：贞吉。","九三：小人用壮，君子用罔，贞厉。羝羊触藩，羸其角。","九四：贞吉悔亡，藩决不羸，壮于大舆之輹。","六五：丧羊于易，无悔。","上六：羝羊触藩，不能退，不能遂，无攸利，艰则吉。"],
+ r:"大壮是壮盛。四阳并进，力有余；然壮不可妄用：羝羊触藩，进则角被缠。君子用罔——以不用力为用力，非不用，是不乱用。",
+ z:"大壮主盛与力。宅之壮在基厚；此卦示力盛之局，宜守其壮不逞其壮，忌以强凌弱、以势压人。",
+ c:"一位兄长力大，凡事替弟弟出头，反而让弟弟处处不敢。后来他只在弟弟开口时才帮，弟弟才立起来。"},
+{n:35,f:"火地晋",
+ x:"康侯用锡马蕃庶，昼日三接。",
+ y:["初六：晋如，摧如，贞吉。罔孚，裕无咎。","六二：晋如，愁如，贞吉。受兹介福，于其王母。","六三：众允，悔亡。","九四：晋如硕鼠，贞厉。","六五：悔亡，失得勿恤，往吉，无不利。","上九：晋其角，维用伐邑，厉吉无咎，贞吝。"],
+ r:"晋是进。康侯用锡马蕃庶，昼日三接——有功而受赏，是进之正途。晋如摧如、晋如愁如，进得不顺时，唯裕无咎：宽着走。",
+ z:"晋主进。宅之晋，宜前低后高、明堂开阔以进气；此卦示上进之局，宜循序不躁进，忌越次争位。",
+ c:"一位职员想升职，先把手上三件小事做成了别人离不开的样子。第二年提级评议，没有人反对他。"},
+{n:36,f:"地火明夷",
+ x:"利艰贞。",
+ y:["初九：明夷于飞，垂其翼。君子于行，三日不食，有攸往，主人有言。","六二：明夷，夷于左股，用拯马壮，吉。","九三：明夷于南狩，得其大首，不可疾贞。","六四：入于左腹，获明夷之心，出于门庭。","六五：箕子之明夷，利贞。","上六：不明晦，初登于天，后入于地。"],
+ r:"明夷是光明受伤。日入地中，才者被掩。此时宜示人以晦：君子于行，三日不食，也要守着不媚。箕子之明夷，是装愚存身，不是真愚。",
+ z:"明夷主晦。宅之明夷，是光被人遮、明处受制；此卦示藏明之局，宜内修不宜外争，忌在暗处逞强。",
+ c:"一位老师在学校受人排挤，他没有争辩，只把课备得更实。两年后调走时，学生送他走了半条街。"},
+{n:37,f:"风火家人",
+ x:"利女贞。",
+ y:["初九：闲有家，悔亡。","六二：无攸遂，在中馈，贞吉。","九三：家人嗃嗃，悔厉吉；妇子嘻嘻，终吝。","六四：富家，大吉。","九五：王假有家，勿恤，往吉。","上九：有孚威如，终吉。"],
+ r:"家人是家道。利女贞——家中主内者正，家才正。闲有家：先立规矩再立情；威如终吉，威严不是凶，是让人知道边界在哪里。",
+ z:"家人主内治。宅之要在家门之内：厨房、卧室、孩子的书桌各得其位；此卦示治家之局，宜先分工后论情。",
+ c:"一家人总为家务吵，后来说定：谁做饭谁不洗碗。规矩定了，吵声就少了，情分反而回来了。"},
+{n:38,f:"火泽睽",
+ x:"小事吉。",
+ y:["初九：悔亡，丧马勿逐，自复；见恶人无咎。","九二：遇主于巷，无咎。","六三：见舆曳，其牛掣，其人天且劓，无初有终。","九四：睽孤，遇元夫，交孚，厉无咎。","六五：悔亡，厥宗噬肤，往何咎。","上九：睽孤，见豕负涂，载鬼一车，先张之弧，后说之弧，匪寇婚媾，往遇雨则吉。"],
+ r:"睽是背离。火上泽下，二女同居而志不同行。小事吉：分歧之时，只宜成小事，不宜图大局。见豕负涂、载鬼一车，多是心存疑而自生鬼。",
+ z:"睽主异。宅之睽，是门向相背、家人各行；此卦示分歧之局，宜各安其位、求同存异，忌强求一致。",
+ c:"两兄弟一个要守店一个要出门，吵了半年。后来商定：守店的管账，出门的跑货，各管一段，反而都顺。"},
+{n:39,f:"水山蹇",
+ x:"利西南，不利东北；利见大人，贞吉。",
+ y:["初六：往蹇，来誉。","六二：王臣蹇蹇，匪躬之故。","九三：往蹇来反。","六四：往蹇来连。","九五：大蹇朋来。","上六：往蹇来硕，吉；利见大人。"],
+ r:"蹇是跛，行难。利西南不利东北——往平易处，不往险阻处；利见大人，是此时须有人扶。往蹇来誉、来反、来连，退比进有用。",
+ z:"蹇主阻。宅之蹇，是路塞门窄、出入不便；此卦示受阻之局，宜改道不宜硬闯，宜求助不宜独行。",
+ c:"一位创业者走投无路时，去找老师。老师只做一件事：把他介绍给三个人。路就这么开了。"},
+{n:40,f:"雷水解",
+ x:"利西南，无所往，其来复吉。有攸往，夙吉。",
+ y:["初六：无咎。","九二：田获三狐，得黄矢，贞吉。","六三：负且乘，致寇至，贞吝。","九四：解而拇，朋至斯孚。","六五：君子维有解，吉；有孚于小人。","上六：公用射隼于高墉之上，获之，无不利。"],
+ r:"解是解开。雷雨作而百果草木皆甲坼，险难既解。利西南，无所往则来复吉；有攸往，夙吉——要动就早动，别拖到难题再回来。",
+ z:"解主解。宅之解，是通渠、修门、散滞；此卦示化解之局，宜早解不宜积压，解完即安，不可再添新结。",
+ c:"一家人积了多年的旧账，一次摊开算清，谁欠谁多少写在纸上。算完那天，家里像搬走了一件大家具。"},
+{n:41,f:"山泽损",
+ x:"有孚，元吉，无咎，可贞，利有攸往。曷之用，二簋可用享。",
+ y:["初九：巳事遄往，无咎，酌损之。","九二：利贞，征凶，弗损，益之。","六三：三人行，则损一人；一人行，则得其友。","六四：损其疾，使遄有喜，无咎。","六五：或益之，十朋之龟弗克违，元吉。","上九：弗损益之，无咎，贞吉，有攸往，得臣无家。"],
+ r:"损是减损。损下益上，是取信于上；然损须有孚，二簋可用享——心意到了，薄礼也成。损之又损，损到该损处，才见其益。",
+ z:"损主减。宅之损，是去繁就简：减器物、减隔墙、减堆塞；此卦示减法之局，宜先减而后增，忌只增不减。",
+ c:"一个人家里越住越挤，后来只做一件事：每买一件新的，扔一件旧的。三年后屋子空了，人也轻了。"},
+{n:42,f:"风雷益",
+ x:"利有攸往，利涉大川。",
+ y:["初九：利用为大作，元吉，无咎。","六二：或益之，十朋之龟弗克违，永贞吉。王用享于帝，吉。","六三：益之用凶事，无咎。有孚中行，告公用圭。","六四：中行，告公从。利用为依迁国。","九五：有孚惠心，勿问元吉。有孚惠我德。","上九：莫益之，或击之，立心勿恒，凶。"],
+ r:"益是增益。损上益下，民说无疆。利有攸往，利涉大川——此时宜动宜远。莫益之或击之，立心勿恒，凶：得了益就变心，是自招击。",
+ z:"益主增。宅之益，是添光添气：开窗、置灯、增人气；此卦示增益之局，宜把好处向下分，忌独揽其利。",
+ c:"一位店主把最好的位置让给新来的伙计摆货，自己守角落。半年后店里人气旺了，他的角落反而最忙。"},
+{n:43,f:"泽天夬",
+ x:"扬于王庭，孚号，有厉，告自邑，不利即戎，利有攸往。",
+ y:["初九：壮于前趾，往不胜为咎。","九二：惕号，莫夜有戎，勿恤。","九三：壮于頄，有凶。君子夬夬，独行，遇雨，若濡，有愠，无咎。","九四：臀无肤，其行次且。牵羊悔亡，闻言不信。","九五：苋陆夬夬，中行无咎。","上六：无号，终有凶。"],
+ r:"夬是决。五阳决一阴，事到终局须断；然决不可暴：扬于王庭，把事情摆在明处说，不利即戎——不可先动武，先在自己一方把话讲清。",
+ z:"夬主决。宅之夬，是了断旧事、清出滞碍；此卦示决断之局，宜明不宜暗，宜早不宜拖，忌以势相逼。",
+ c:"一位主管要裁掉一个长期拖后腿的项目，他没有暗中断粮，而是把问题摆到会上讲清。散会后，负责的人自己申请退出。"},
+{n:44,f:"天风姤",
+ x:"女壮，勿用取女。",
+ y:["初六：系于金柅，贞吉，有攸往，见凶，羸豕孚蹢躅。","九二：包有鱼，无咎，不利宾。","九三：臀无肤，其行次且，厉，无大咎。","九四：包无鱼，起凶。","九五：以杞包瓜，含章，有陨自天。","上九：姤其角，吝，无咎。"],
+ r:"姤是遇。一阴生于下，不期而遇，其势渐长。女壮勿用取女——初遇之盛，不可托以长久；系于金柅，是及早系住，别让它长成大事。",
+ z:"姤主遇。宅之姤，是外来之人、外来之物入宅；此卦示相遇之局，宜先观后纳，忌一见即亲、一纳即信。",
+ c:"一位老板招了个能干的人，头一个月样样出色，半年后开始自作主张。老板说：那时就该把话讲清，不该等。"},
+{n:45,f:"泽地萃",
+ x:"亨。王假有庙，利见大人，亨，利贞。用大牲吉，利有攸往。",
+ y:["初六：有孚不终，乃乱乃萃，若号一握为笑，勿恤，往无咎。","六二：引吉，无咎，孚乃利用禴。","六三：萃如，嗟如，无攸利，往无咎，小吝。","九四：大吉，无咎。","九五：萃有位，无咎。匪孚，元永贞，悔亡。","上六：赍咨涕洟，无咎。"],
+ r:"萃是聚。泽上于地，众聚而需有主：王假有庙，聚必有中心，否则聚而乱。用大牲吉——聚时舍得，人心才聚得住。",
+ z:"萃主聚。宅之萃，是人气所聚：厅堂宜宽、门路宜顺；此卦示聚合之局，宜有主有次，忌聚而无序。",
+ c:"一次家族聚会，谁也做主，菜冷了没人管。后来定下每年由一户主事，从那年起，年年都到齐。"},
+{n:46,f:"地风升",
+ x:"元亨，用见大人，勿恤，南征吉。",
+ y:["初六：允升，大吉。","九二：孚乃利用禴，无咎。","九三：升虚邑。","六四：王用亨于岐山，吉无咎。","六五：贞吉，升阶。","上六：冥升，利于不息之贞。"],
+ r:"升是上升。地中生木，柔以时升；用见大人，勿恤，南征吉——方向对了，就不必忧虑。升虚邑，是升而无所阻；冥升，是昏着头往上冲。",
+ z:"升主升。宅之升，是阶梯、楼梯、门户渐次而上；此卦示上升之局，宜循序渐进，忌一步登天。",
+ c:"一位手艺人不接大单，只接小单，一单一单做得比前一单好。五年后他自己都不知道，已经排不上队了。"},
+{n:47,f:"泽水困",
+ x:"亨，贞，大人吉，无咎，有言不信。",
+ y:["初六：臀困于株木，入于幽谷，三岁不觌。","九二：困于酒食，朱绂方来，利用享祀，征凶，无咎。","六三：困于石，据于蒺蔾，入于其宫，不见其妻，凶。","九四：来徐徐，困于金车，吝，有终。","九五：劓刖，困于赤绂，乃徐有说，利用祭祀。","上六：困于葛藟，于臲卼，曰动悔。有悔，征吉。"],
+ r:"困是困。泽无水，困。有言不信——此时说什么都没人信，唯守志不移。困而不失其所亨，是身处困而心里不困；困于葛藟，是越想脱越缠。",
+ z:"困主困。宅之困，是屋窄、财紧、人疲；此卦示受困之局，宜守正待时，忌以言语辩白、以妄动求解。",
+ c:"一个人被误会，逢人便解释，越解释越没人信。后来他不再说，只把手上的事做完。事成了，话自然有人替他说。"},
+{n:48,f:"水风井",
+ x:"改邑不改井，无丧无得，往来井井。汔至，亦未繘井，羸其瓶，凶。",
+ y:["初六：井泥不食，旧井无禽。","九二：井谷射鲋，瓮敝漏。","九三：井渫不食，为我心恻，可用汲，王明，并受其福。","六四：井甃，无咎。","九五：井冽，寒泉食。","上六：井收勿幕，有孚元吉。"],
+ r:"井是井。改邑不改井，井是根本：城可迁而井不可废。井泥不食，是久不淘则废；井冽寒泉食，是常淘则清；井收勿幕，井要敞开给人用。",
+ z:"井主源。宅之井，是水、是财路、是家学；此卦示根本之局，宜常淘常修，忌用而不养、养而不用。",
+ c:"一口老井干了，村里人都去打新井。老人每月下去淘一次，两年后那口井又出水，比新井还甜。"},
+{n:49,f:"泽火革",
+ x:"巳日乃孚，元亨利贞，悔亡。",
+ y:["初九：巩用黄牛之革。","六二：巳日乃革之，征吉，无咎。","九三：征凶，贞厉，革言三就，有孚。","九四：悔亡，有孚改命，吉。","九五：大人虎变，未占有孚。","上六：君子豹变，小人革面，征凶，居贞吉。"],
+ r:"革是改。巳日乃孚——改要等到时机与人心都到了才动手；革言三就，反复议过三次才可信。大人虎变、君子豹变：改得彻底，气象才新。",
+ z:"革主改。宅之革，是迁居、改建、更张旧制；此卦示变革之局，宜先议后动，忌朝令夕改、改而不信。",
+ c:"一家老店要改招牌，老板先试了三个月，问遍熟客才定。换招牌那天，老客说：早就该换了——因为他们早就看过了。"},
+{n:50,f:"火风鼎",
+ x:"元吉，亨。",
+ y:["初六：鼎颠趾，利出否，得妾以其子，无咎。","九二：鼎有实，我仇有疾，不我能即，吉。","九三：鼎耳革，其行塞，雉膏不食，方雨亏悔，终吉。","九四：鼎折足，覆公𫗧，其形渥，凶。","六五：鼎黄耳，金铉，利贞。","上九：鼎玉铉，大吉，无不利。"],
+ r:"鼎是器，也是位。鼎有实，器要装东西才有用；鼎折足，覆公餗——位高而力不任，是最大的凶。黄耳金铉，是提得起、放得稳。",
+ z:"鼎主器与位。宅之鼎，是家中重器之所：灶、堂、库；此卦示当位之局，宜量力受任，忌德薄而位尊。",
+ c:"一位年轻人被推上负责位，先推辞了两次，第三次接了，只提一个条件：给我一个能扶得住的人。三年无事。"},
+{n:51,f:"震为雷",
+ x:"亨。震来虩虩，笑言哑哑。震惊百里，不丧匕鬯。",
+ y:["初九：震来虩虩，后笑言哑哑，吉。","六二：震来厉，亿丧贝，跻于九陵，勿逐，七日得。","六三：震苏苏，震行无眚。","九四：震遂泥。","六五：震往来厉，亿无丧，有事。","上六：震索索，视矍矍，征凶。震不于其躬，于其邻，无咎。婚媾有言。"],
+ r:"震是雷，是动。震来虩虩，后笑言哑哑——先惧而后安，惧是好事。震惊百里，不丧匕鬯：大事临头而手中不失其守。震不于其躬，于其邻，是警在他人，仍须自戒。",
+ z:"震主动与惊。宅之震，是响动、是惊扰：门响、声噪；此卦示受惊之局，宜定心先定室，忌惊中乱断。",
+ c:"一次家里半夜跳闸，孩子吓得哭。父亲没有急着找人修，先把灯点上、把话说稳，第二天才查线路。孩子后来遇事不怕。"},
+{n:52,f:"艮为山",
+ x:"艮其背，不获其身，行其庭，不见其人，无咎。",
+ y:["初六：艮其趾，无咎，利永贞。","六二：艮其腓，不拯其随，其心不快。","九三：艮其限，列其夤，厉薰心。","六四：艮其身，无咎。","六五：艮其辅，言有序，悔亡。","上九：敦艮，吉。"],
+ r:"艮是山，是止。艮其背，不获其身——止在看不见自己的地方，才是真止。时止则止，时行则行；艮其辅，言有序，悔亡：话有次序，就是修行。",
+ z:"艮主止。宅之艮，是墙、是界、是后靠；此卦示守止之局，宜定界分明，忌无界而侵、无靠而立。",
+ c:"一个人事事都应承，忙到没有自己。后来他学会每次只说三句话：我看看、我做不到、我明天答复。人反而敬他。"},
+{n:53,f:"风山渐",
+ x:"女归吉，利贞。",
+ y:["初六：鸿渐于干，小子厉，有言，无咎。","六二：鸿渐于磐，饮食衎衎，吉。","九三：鸿渐于陆，夫征不复，妇孕不育，凶；利御寇。","六四：鸿渐于木，或得其桷，无咎。","九五：鸿渐于陵，妇三岁不孕，终莫之胜，吉。","上九：鸿渐于陆，其羽可用为仪，吉。"],
+ r:"渐是渐进。女归吉——嫁娶如此，做事亦然：鸿渐于干、于磐、于陆、于木、于陵，一步比一步高，不可跳级。渐到极处，其羽可用为仪。",
+ z:"渐主渐。宅之渐，是宅气逐步养成，不宜骤改；此卦示渐进之局，宜一年一成，忌一次改完。",
+ c:"一位木匠做一张桌，先做架、再做面、最后打磨上油，中间隔一个月。他说：急不得，木头要喘气。"},
+{n:54,f:"雷泽归妹",
+ x:"征凶，无攸利。",
+ y:["初九：归妹以娣，跛能履，征吉。","九二：眇能视，利幽人之贞。","六三：归妹以须，反归以娣。","九四：归妹愆期，迟归有时。","六五：帝乙归妹，其君之袂，不如其娣之袂良，月几望，吉。","上六：女承筐无实，士刲羊无血，无攸利。"],
+ r:"归妹是嫁女，是位不正而求合。征凶，无攸利——此时动则凶。归妹愆期，迟归有时：晚一点反而对。女承筐无实，是虚礼而无实心。",
+ z:"归妹主合而不正。宅之归妹，是婚嫁、入伙、依附；此卦示不正之合，宜缓不宜急，宜正名分而后合。",
+ c:"一对年轻人急着领证，长辈劝再等一年。等了一年，两个人都在各自的事上站稳了，婚也稳了。"},
+{n:55,f:"雷火丰",
+ x:"亨。王假之，勿忧，宜日中。",
+ y:["初九：遇其配主，虽旬无咎，往有尚。","六二：丰其蔀，日中见斗，往得疑疾，有孚发若，吉。","九三：丰其沛，日中见沫，折其右肱，无咎。","九四：丰其蔀，日中见斗，遇其夷主，吉。","六五：来章，有庆誉，吉。","上六：丰其屋，蔀其家，窥其户，阒其无人，三岁不觌，凶。"],
+ r:"丰是丰盛。王假之，勿忧，宜日中——日正当中时最亮，也最该警惕。日中见斗，是明处反而看不清；丰其屋而蔀其家，屋大而家暗，是盛极的空。",
+ z:"丰主盛。宅之丰，是屋大、财厚、人多；此卦示极盛之局，宜日中而虑昃，忌以丰为常、以盛为久。",
+ c:"一位老板在最旺时把一间铺扩成三层，第二年行情一落，三层全空。他说：那时只想着大，没想着光会斜。"},
+{n:56,f:"火山旅",
+ x:"小亨，旅贞吉。",
+ y:["初六：旅琐琐，斯其所取灾。","六二：旅即次，怀其资，得童仆贞。","九三：旅焚其次，丧其童仆，贞厉。","九四：旅于处，得其资斧，我心不快。","六五：射雉一矢亡，终以誉命。","上九：鸟焚其巢，旅人先笑后号咷。丧牛于易，凶。"],
+ r:"旅是旅。小亨，旅贞吉——在外者所求不大，守正即可。旅焚其次，丧其童仆：客居而失其本，最易伤。射雉一矢亡，终以誉命：舍一矢而得名。",
+ z:"旅主客。宅之旅，是寄居、外派、离乡；此卦示客居之局，宜谦宜俭、少与人争，忌以客为主。",
+ c:"一个人外派到陌生城市，头半年只做三件事：按时、少言、记账。回任时，那边的人还托他带话。"},
+{n:57,f:"巽为风",
+ x:"小亨。利有攸往。利见大人。",
+ y:["初六：进退，利武人之贞。","九二：巽在床下，用史巫纷若，吉无咎。","九三：频巽，吝。","六四：悔亡，田获三品。","九五：贞吉悔亡，无不利。无初有终，先庚三日，后庚三日，吉。","上九：巽在床下，丧其资斧，贞凶。"],
+ r:"巽是风，是入。小亨，利有攸往，利见大人——柔顺而入，无孔不入。巽在床下，用史巫纷若：卑而近神，是过恭；频巽，是反复顺从，反失其正。",
+ z:"巽主入。宅之巽，是通风、是渗透；此卦示顺入之局，宜柔而有骨，忌一味迁就、无骨之顺。",
+ c:"一位职员从不得罪人，事事顺着，三年没升。后来他在一次会上第一次说不同意，那年反而被提了。"},
+{n:58,f:"兑为泽",
+ x:"亨。利贞。",
+ y:["初九：和兑，吉。","九二：孚兑，吉，悔亡。","六三：来兑，凶。","九四：商兑，未宁，介疾有喜。","九五：孚于剥，有厉。","上六：引兑。"],
+ r:"兑是泽，是说。和兑吉，孚兑吉——说以诚、说以和；来兑凶，是主动讨好；孚于剥，有厉，是信了会剥你的人。",
+ z:"兑主说与悦。宅之兑，是言语、是笑；此卦示口舌之局，宜言而有实，忌以悦掩非、以言取人。",
+ c:"一位销售很会说话，客户都喜欢他，但成交少。后来他把话说少一半，把事做多一分，单子反而来了。"},
+{n:59,f:"风水涣",
+ x:"亨。王假有庙，利涉大川，利贞。",
+ y:["初六：用拯马壮，吉。","九二：涣奔其机，悔亡。","六三：涣其躬，无悔。","六四：涣其群，元吉。涣有丘，匪夷所思。","九五：涣汗其大号，涣王居，无咎。","上九：涣其血，去逖出，无咎。"],
+ r:"涣是散。风行水上，涣。王假有庙——散中有聚，散其私而聚其公。涣其群元吉，是散了小圈子；涣汗其大号，号令一出如汗不可收。",
+ z:"涣主散。宅之涣，是离、是分、是散气；此卦示离散之局，宜散小聚大，忌散而不聚、散而无主。",
+ c:"一个团队各自为政，开会没人听。新主管上任第一天，只做一件事：把所有人的目标写在同一张纸上。散的人自己回来了。"},
+{n:60,f:"水泽节",
+ x:"亨。苦节不可贞。",
+ y:["初九：不出户庭，无咎。","九二：不出门庭，凶。","六三：不节若，则嗟若，无咎。","六四：安节，亨。","九五：甘节，吉；往有尚。","上六：苦节，贞凶，悔亡。"],
+ r:"节是节制。亨，苦节不可贞——节得过了头就苦，苦节不能长久。安节亨、甘节吉：节要成习惯，才是甘。不节若则嗟若，是放纵之后的叹。",
+ z:"节主节。宅之节，是度：用度、食度、行度；此卦示节制之局，宜有常度而不过苛，忌以苦为节。",
+ c:"一个人戒了烟酒，又戒了所有聚会，最后戒到没朋友。后来他只戒一件事：每晚十一点关手机。人反而清爽。"},
+{n:61,f:"风泽中孚",
+ x:"豚鱼吉，利涉大川，利贞。",
+ y:["初九：虞吉，有他不燕。","九二：鸣鹤在阴，其子和之，我有好爵，吾与尔靡之。","六三：得敌，或鼓或罢，或泣或歌。","六四：月几望，马匹亡，无咎。","九五：有孚挛如，无咎。","上九：翰音登于天，贞凶。"],
+ r:"中孚是诚信在中。豚鱼吉——诚到极处，连豚鱼也可感。鸣鹤在阴，其子和之：诚不必大声，自有应者。翰音登于天，贞凶：声音上天而实不至，是虚名。",
+ z:"中孚主信。宅之中孚，是家人相信：不必多言而事成；此卦示立信之局，宜先信而后令，忌以言代行。",
+ c:"一位父亲答应孩子周末去钓鱼，临时有事，他没有敷衍，而是当场改了日期并写在日历上。孩子从此信他的话。"},
+{n:62,f:"雷山小过",
+ x:"亨。利贞。可小事，不可大事。飞鸟遗之音，不宜上宜下，大吉。",
+ y:["初六：飞鸟以凶。","六二：过其祖，遇其妣；不及其君，遇其臣；无咎。","九三：弗过防之，从或戕之，凶。","九四：无咎，弗过遇之。往厉必戒，勿用永贞。","六五：密云不雨，自我西郊，公弋取彼在穴。","上六：弗遇过之，飞鸟离之，凶，是谓灾眚。"],
+ r:"小过是过得小。可小事不可大事，飞鸟遗之音，不宜上宜下——此时宜低不宜高，宜守不宜攻。弗过防之，从或戕之：不设防，会被人伤。",
+ z:"小过主过。宅之小过，是细处失守：门缝、漏处、小事；此卦示防微之局，宜在细处立规，忌以小过为无碍。",
+ c:"一间屋漏了半年没人管，后来一场雨泡坏了地板。主人说：早就看见了，只当是小水。"},
+{n:63,f:"水火既济",
+ x:"亨小。利贞。初吉终乱。",
+ y:["初九：曳其轮，濡其尾，无咎。","六二：妇丧其茀，勿逐，七日得。","九三：高宗伐鬼方，三年克之，小人勿用。","六四：𦈡有衣袽，终日戒。","九五：东邻杀牛，不如西邻之禴祭，实受其福。","上六：濡其首，厉。"],
+ r:"既济是已成。初吉终乱——事成之后最容易乱。曳其轮、濡其尾，是过了河还要小心。东邻杀牛不如西邻之禴祭，是厚礼不如诚心。",
+ z:"既济主成。宅之既济，是宅已成、事已定；此卦示守成之局，宜成而不怠，忌以为已成便不管。",
+ c:"一家装修完的房子，头一年住得舒服，第三年墙裂了。原来验收时那一道缝，谁都说没关系。"},
+{n:64,f:"火水未济",
+ x:"亨。小狐汔济，濡其尾，无攸利。",
+ y:["初六：濡其尾，吝。","九二：曳其轮，贞吉。","六三：未济，征凶，利涉大川。","九四：贞吉，悔亡，震用伐鬼方，三年有赏于大国。","六五：贞吉，无悔，君子之光，有孚，吉。","上九：有孚于饮酒，无咎，濡其首，有孚失是。"],
+ r:"未济是未成。小狐汔济，濡其尾——差最后一步反而湿了尾。亨，是未成之中自有可通。有孚于饮酒，无咎；濡其首，有孚失是：庆功过头，就失了分寸。",
+ z:"未济主未成。宅之未济，是未竟之事：未修、未迁、未定；此卦示收尾之局，宜把最后一步做实，忌半途而庆。",
+ c:"一位作者书写到最后一章，先请了客。客散之后，那一章拖了两年。他说：早知道等写完再请。"},
+];
+
+/* ===== 八卦 ===== */
+const TRI = {乾:[1,1,1],兑:[1,1,0],离:[1,0,1],震:[1,0,0],巽:[0,1,1],坎:[0,1,0],艮:[0,0,1],坤:[0,0,0]};
+const SX = {天:'乾',泽:'兑',火:'离',雷:'震',风:'巽',水:'坎',山:'艮',地:'坤'};
+
+const el = function(id){ return document.getElementById(id); };
+
+function parse(h){
+  const f = h.f;
+  let up, low, short;
+  if (f.indexOf('为') >= 0){
+    up = low = f.charAt(0);
+    short = f.charAt(0);
+  } else {
+    up = SX[f.charAt(0)];
+    low = SX[f.charAt(1)];
+    short = f.slice(2);
+  }
+  return {up:up, low:low, short:short};
+}
+
+/* 六爻，自初爻至上爻 */
+function hexLines(h){
+  const p = parse(h);
+  return TRI[p.low].concat(TRI[p.up]);
+}
+
+function hexSVG(h, big){
+  const lines = hexLines(h);
+  const out = [];
+  for (let i = 0; i < 6; i++){
+    const li = 5 - i, y = i * 34;
+    if (lines[li]){
+      out.push('<rect x="0" y="' + y + '" width="200" height="20"/>');
+    } else {
+      out.push('<rect x="0" y="' + y + '" width="88" height="20"/>' +
+               '<rect x="112" y="' + y + '" width="88" height="20"/>');
+    }
+  }
+  return '<svg viewBox="0 0 200 190" class="hexsvg" role="img" aria-label="' + h.f +
+         '卦象">' + out.join('') + '</svg>';
+}
+
+const NUM = '零一二三四五六七八九';
+function cnNo(n){
+  if (n <= 10) return n === 10 ? '十' : NUM.charAt(n);
+  if (n < 20) return '十' + NUM.charAt(n % 10);
+  return NUM.charAt(Math.floor(n / 10)) + '十' + (n % 10 ? NUM.charAt(n % 10) : '');
+}
+function idxLabel(h){ return '第' + cnNo(h.n) + '卦'; }
+
+/* ===== 状态 ===== */
+const state = {cur:1, route:'home', rolling:false, raf:0};
+
+function cur(){ return YI[state.cur - 1]; }
+
+function figureInto(node, h, captionNode){
+  node.classList.remove('empty');
+  node.innerHTML = '<div class="seal">卜<br>易</div>' +
+    '<img src="assets/renjiandao/' + String(h.n).padStart(3, '0') + '.jpg" alt="' +
+    h.f + '人间道图">';
+  const img = node.querySelector('img');
+  img.onerror = function(){
+    node.innerHTML = '';
+    node.classList.add('empty');
+  };
+  if (captionNode){
+    captionNode.textContent = '人间道图 · ' + parse(h).short;
+  }
+}
+
+function updateMeta(){
+  const h = cur();
+  el('headIdx').textContent = idxLabel(h);
+  el('headName').textContent = h.f;
+  document.title = '卜易 · ' + h.f + ' · 心存敬畏，卜以决疑，不疑何卜';
+}
+
+/* ===== 渲染 ===== */
+function renderHome(){
+  const h = cur(), p = parse(h);
+  el('hexImg').innerHTML = hexSVG(h, true);
+  el('hexName').textContent = h.f;
+  el('hexSub').textContent = idxLabel(h) + ' · 上' + p.up + '下' + p.low;
+  figureInto(el('homeFig'), h, el('homeCap'));
+  updateMeta();
+}
+
+function renderAll(){
+  const grid = el('guaGrid');
+  const curN = state.cur;
+  grid.innerHTML = YI.map(function(h){
+    return '<button class="cell' + (h.n === curN ? ' cur' : '') + '" type="button" data-act="pick" data-n="' +
+      h.n + '"><span class="cell-svg">' + hexSVG(h) +
+      '</span><span class="cell-no">' + cnNo(h.n) + '</span><span class="cell-name">' +
+      parse(h).short + '</span></button>';
+  }).join('');
+  el('headIdx').textContent = idxLabel(cur());
+  el('headName').textContent = cur().f;
+}
+
+function renderTu(){
+  const h = cur(), p = parse(h);
+  el('tuHex').innerHTML = hexSVG(h, true);
+  el('tuName').textContent = h.f;
+  el('tuSub').textContent = idxLabel(h) + ' · 上' + p.up + '下' + p.low;
+  figureInto(el('tuFig'), h, el('tuCap'));
+  el('tuYi').textContent = h.r;
+  el('tuGuaci').textContent = '卦辞：' + h.x;
+  el('tuHead').textContent = '图解 · ' + h.f;
+}
+
+function renderFull(){
+  const h = cur(), p = parse(h);
+  el('fullHex').innerHTML = hexSVG(h, true);
+  el('fullName').textContent = h.f;
+  figureInto(el('fullFig'), h, null);
+  el('fullGuaci').textContent = '卦辞：' + h.x + '　·　上' + p.up + '下' + p.low +
+    '　·　' + idxLabel(h);
+  el('fullR').textContent = h.r;
+  el('fullZ').textContent = h.z;
+  el('fullC').textContent = h.c;
+  el('fullHead').textContent = '全解 · ' + h.f;
+}
+
+function render(){
+  if (state.route === 'home') renderHome();
+  else if (state.route === 'all') renderAll();
+  else if (state.route === 'tu') renderTu();
+  else if (state.route === 'full') renderFull();
+}
+
+/* ===== 路由 ===== */
+function readRoute(){
+  const m = /#\/(home|all|tu|full)/.exec(location.hash);
+  return m ? m[1] : 'home';
+}
+function setView(r){
+  state.route = r;
+  ['home','all','tu','full'].forEach(function(k){
+    el('view-' + k).classList.toggle('on', k === r);
+  });
+  render();
+}
+function go(r){
+  if (readRoute() === r) setView(r);
+  else location.hash = '#/' + r;
+}
+
+/* ===== 换卦 ===== */
+function step(delta){
+  if (state.rolling) return;
+  state.cur = ((state.cur - 1 + delta + 64) % 64) + 1;
+  render();
+}
+
+/* 每日一卦：三秒抽动 */
+function dailyRoll(){
+  if (state.rolling) return;
+  state.rolling = true;
+  const target = 1 + Math.floor(Math.random() * 64);
+  const img = el('hexImg'), name = el('hexName'), sub = el('hexSub');
+  img.classList.add('rolling');
+  name.style.opacity = '.55';
+  sub.textContent = '六十四卦 · 抽动中';
+  const t0 = performance.now();
+  let last = 0;
+
+  function frame(now){
+    const t = now - t0;
+    if (t < 2420){
+      if (now - last > 68){
+        last = now;
+        const n = 1 + Math.floor(Math.random() * 64);
+        img.innerHTML = hexSVG(YI[n - 1], true);
+        name.textContent = YI[n - 1].f;
+      }
+      state.raf = requestAnimationFrame(frame);
+    } else {
+      state.cur = target;
+      state.rolling = false;
+      img.classList.remove('rolling');
+      name.style.opacity = '1';
+      render();
+    }
+  }
+  state.raf = requestAnimationFrame(frame);
+}
+
+/* ===== 解卦 ===== */
+function openDivine(){
+  const h = cur();
+  el('dmTitle').textContent = '解卦 · ' + h.f;
+  el('dmQ').value = '';
+  el('dmResult').hidden = true;
+  el('dmResult').innerHTML = '';
+  el('divineModal').hidden = false;
+  setTimeout(function(){ el('dmQ').focus(); }, 30);
+}
+function closeDivine(){
+  el('divineModal').hidden = true;
+}
+function solve(){
+  const h = cur();
+  const q = el('dmQ').value.trim();
+  const box = el('dmResult');
+  const yao = h.y.map(function(t){
+    return '<div class="yao-line">' + t + '</div>';
+  }).join('');
+  let html = '<section>' +
+    '<h5>卦辞</h5><p>' + h.x + '</p>' +
+    '<h5>六爻</h5><div class="yao-block">' + yao + '</div>' +
+    '<h5>意解</h5><p>' + h.r + '</p>';
+  if (q){
+    html += '<h5>就所问</h5>' +
+      '<p class="q-echo">所问：' + q + '</p>' +
+      '<p>' + h.c + '</p>' +
+      '<p>以此为镜，回到「' + q + '」：先辨此事的时机到不到、自家的人事备不备；' +
+      '卦辞爻辞所说，皆是令人先正自己，再论进退。' + '</p>';
+  }
+  html += '<h5>提示</h5><p>据经文与意解推演，供参证，不作决断。</p></section>';
+  box.innerHTML = html;
+  box.hidden = false;
+  box.scrollIntoView({block:'nearest', behavior:'smooth'});
+}
+
+/* ===== 交互 ===== */
+function act(name, node){
+  switch (name){
+    case 'prev': step(-1); break;
+    case 'next': step(1); break;
+    case 'daily': dailyRoll(); break;
+    case 'all': go('all'); break;
+    case 'tu': go('tu'); break;
+    case 'full': go('full'); break;
+    case 'divine': openDivine(); break;
+    case 'close': closeDivine(); break;
+    case 'solve': solve(); break;
+    case 'pick':
+      if (node && node.dataset.n){
+        state.cur = parseInt(node.dataset.n, 10);
+        go('home');
+      }
+      break;
+  }
+}
+
+document.addEventListener('click', function(e){
+  const b = e.target.closest('[data-act]');
+  if (b) act(b.dataset.act, b);
+});
+
+document.addEventListener('keydown', function(e){
+  if (e.key === 'Escape' && !el('divineModal').hidden){ closeDivine(); return; }
+  if (!el('divineModal').hidden) return;
+  if (state.route !== 'home') return;
+  if (e.key === 'ArrowLeft'){ step(-1); }
+  if (e.key === 'ArrowRight'){ step(1); }
+});
+
+window.addEventListener('hashchange', function(){ setView(readRoute()); });
+
+/* ===== 启动 ===== */
+state.cur = 1;
+setView(readRoute());
+</script>
+</body>
+</html>
