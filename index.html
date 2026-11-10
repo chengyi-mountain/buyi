@@ -947,10 +947,12 @@ function step(delta){
 function dailyHex(){
   const now = new Date();
   now.setMinutes(now.getMinutes() + now.getTimezoneOffset() - 480);
-  const key = now.getFullYear() + '-' + (now.getMonth() + 1) + '-' + now.getDate();
-  let h = 0;
-  for (let i = 0; i < key.length; i++) h = (h * 31 + key.charCodeAt(i)) % 100003;
-  return h % 64 + 1;
+  let s = now.getFullYear() * 10000 + (now.getMonth() + 1) * 100 + now.getDate();
+  /* 把日期打散，免得连续几天连号 */
+  s = Math.imul(s ^ (s >>> 16), 2246822507) >>> 0;
+  s = Math.imul(s ^ (s >>> 13), 3266489909) >>> 0;
+  s = (s ^ (s >>> 16)) >>> 0;
+  return (s % 64) + 1;
 }
 
 /* 每日一卦：三秒抽动 */
