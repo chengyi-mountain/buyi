@@ -63,9 +63,16 @@ body::before{
 .hex-title p{margin:7px 0 0;font-size:12px;letter-spacing:.2em;color:var(--ink-3)}
 /* 图位 */
 .renjiandao{margin:0;width:min(100%,520px);display:flex;flex-direction:column;gap:9px}
-.fig-frame{position:relative;border:1px solid var(--line);padding:7px;background:rgba(255,252,244,.55);box-shadow:0 1px 0 rgba(31,28,24,.06),0 12px 26px -22px rgba(31,28,24,.5)}
-.fig-frame img{display:block;width:100%;height:auto}
-.fig-frame.empty{aspect-ratio:4/3;display:flex;align-items:center;justify-content:center;background:
+.fig-frame{position:relative;border:1px solid var(--line);padding:7px;background:rgba(255,252,244,.55);box-shadow:0 1px 0 rgba(31,28,24,.06),0 12px 26px -22px rgba(31,28,24,.5);width:100%;max-width:420px;margin:0 auto}
+.fig-frame img{display:block;width:100%;height:auto;cursor:zoom-in}
+.fig-link{display:block;line-height:0}
+.fig-dl{position:absolute;left:8px;bottom:8px;padding:4px 8px;border:1px solid rgba(164,57,42,.35);background:rgba(239,232,218,.92);color:var(--cinnabar);font-family:"Kaiti SC","STKaiti","KaiTi",serif;font-size:11.5px;letter-spacing:.08em;cursor:pointer;opacity:.72;transition:opacity .2s}
+.fig-dl:hover{opacity:1}
+.notice{margin:18px auto 0;max-width:620px;border-top:1px solid var(--line);padding-top:10px;font-size:12.5px;line-height:1.85;color:var(--ink-3)}
+.notice summary{cursor:pointer;font-family:"Kaiti SC","STKaiti","KaiTi",serif;font-size:13px;letter-spacing:.12em;color:var(--ink-2)}
+.notice ul{margin:8px 0 0;padding-left:18px}
+.notice li{margin:0 0 5px}
+.fig-frame.empty{aspect-ratio:5/7;display:flex;align-items:center;justify-content:center;background:
   repeating-linear-gradient(45deg,rgba(31,28,24,.03) 0 6px,transparent 6px 12px),rgba(255,252,244,.5)}
 .fig-frame.empty::after{content:"人间道图 · 图位待置";font-family:"Kaiti SC","STKaiti","KaiTi",serif;font-size:13px;letter-spacing:.16em;color:var(--ink-3)}
 .fig-frame .seal{position:absolute;right:14px;bottom:12px;width:40px;height:40px;border:1px solid rgba(164,57,42,.55);color:var(--cinnabar);font-family:"Kaiti SC","Kaiti","KaiTi",serif;font-size:10px;line-height:1.1;display:flex;align-items:center;justify-content:center;text-align:center;letter-spacing:.02em;opacity:.85;background:rgba(239,232,218,.35)}
@@ -275,6 +282,17 @@ body::before{
           <button class="btn key" type="button" data-act="full">全解</button>
           <button class="btn ghost" type="button" data-act="divine">解卦</button>
         </div>
+        <details class="notice">
+          <summary>使用说明与风险提示</summary>
+          <ul>
+            <li>图解扫描自《天纪·人间道》讲义，版权归原作者倪海厦与原出版方所有；本站仅作个人研习参证，不主张任何权利。</li>
+            <li>点「下载此图」时，浏览器会在存盘文件上现加一层极淡出处标与一行来源说明，便于追溯来源；页面显示本身不带任何水印。</li>
+            <li>请勿去除标记后据为己作，勿用于课程售卖、引流或任何商业用途，勿二次公开发布（网站、网盘、公众号、短视频等）。</li>
+            <li>本仓库为公开仓库，图片也可经由文件路径直接取用；标记只是声明与溯源线索，不构成技术防护，也不担保能阻止转载。</li>
+            <li>「图意」「阳宅学」「案例」为依卦辞爻辞推演的文字，非原书原文，不作吉凶承诺；据本站内容作出的任何决定，风险由使用者自担。</li>
+            <li>若权利人认为此处使用不当，请联系仓库作者，将立即移除相关图片。</li>
+          </ul>
+        </details>
       </div>
     </div>
   </main>
@@ -779,16 +797,18 @@ function cur(){ return YI[state.cur - 1]; }
 
 function figureInto(node, h, captionNode){
   node.classList.remove('empty');
+  const p = 'assets/renjiandao/' + String(h.n).padStart(3, '0') + '.jpg';
   node.innerHTML = '<div class="seal">卜<br>易</div>' +
-    '<img src="assets/renjiandao/' + String(h.n).padStart(3, '0') + '.jpg" alt="' +
-    h.f + '人间道图">';
+    '<a class="fig-link" href="' + p + '" target="_blank" rel="noopener">' +
+    '<img src="' + p + '" alt="' + h.f + '人间道图解"></a>' +
+    '<button class="fig-dl" type="button" data-act="dl">下载此图</button>';
   const img = node.querySelector('img');
   img.onerror = function(){
     node.innerHTML = '';
     node.classList.add('empty');
   };
   if (captionNode){
-    captionNode.textContent = '人间道图 · ' + parse(h).short;
+    captionNode.textContent = '人间道图解 · ' + parse(h).short;
   }
 }
 
@@ -947,6 +967,58 @@ function solve(){
   box.scrollIntoView({block:'nearest', behavior:'smooth'});
 }
 
+/* ===== 下载：现画一层极淡出处标，页面显示始终用原图 ===== */
+function downloadFigure(n){
+  const p = 'assets/renjiandao/' + String(n).padStart(3, '0') + '.jpg';
+  fetch(p).then(function(r){
+    if (!r.ok) throw new Error('http ' + r.status);
+    return r.blob();
+  }).then(function(blob){
+    return new Promise(function(res, rej){
+      const im = new Image();
+      im.onload = function(){ res(im); };
+      im.onerror = rej;
+      im.src = URL.createObjectURL(blob);
+    });
+  }).then(function(im){
+    const c = document.createElement('canvas');
+    c.width = im.naturalWidth;
+    c.height = im.naturalHeight;
+    const x = c.getContext('2d');
+    x.drawImage(im, 0, 0);
+    const fs = Math.round(c.width / 26);
+    x.save();
+    x.globalAlpha = 0.09;
+    x.fillStyle = '#1f1c18';
+    x.font = '600 ' + fs + 'px "Kaiti SC","STKaiti","KaiTi",serif';
+    x.translate(c.width / 2, c.height / 2);
+    x.rotate(-Math.PI / 9);
+    const word = '卜易 · buyi · 仅供参证';
+    const wStep = x.measureText(word).width + fs * 3;
+    for (let yy = -c.height; yy < c.height * 1.6; yy += fs * 5){
+      for (let xx = -c.width; xx < c.width * 1.2; xx += wStep){
+        x.fillText(word, xx, yy);
+      }
+    }
+    x.restore();
+    x.globalAlpha = 0.5;
+    x.fillStyle = '#1f1c18';
+    x.font = '400 ' + Math.round(fs * 0.75) + 'px sans-serif';
+    x.fillText('源 chengyi-mountain/buyi · 归原作者与出版方', 18, c.height - 18);
+    c.toBlob(function(b){
+      const a = document.createElement('a');
+      const obj = URL.createObjectURL(b);
+      a.href = obj;
+      a.download = 'buyi-' + String(n).padStart(3, '0') + '.jpg';
+      a.click();
+      setTimeout(function(){ URL.revokeObjectURL(obj); }, 3000);
+    }, 'image/jpeg', 0.9);
+  }).catch(function(){
+    // 本地 file:// 打开时取不到文件，退回直接打开原图
+    window.open(p, '_blank');
+  });
+}
+
 /* ===== 交互 ===== */
 function act(name, node){
   switch (name){
@@ -957,6 +1029,7 @@ function act(name, node){
     case 'tu': go('tu'); break;
     case 'full': go('full'); break;
     case 'divine': openDivine(); break;
+    case 'dl': downloadFigure(state.cur); break;
     case 'close': closeDivine(); break;
     case 'solve': solve(); break;
     case 'pick':
