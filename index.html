@@ -84,8 +84,8 @@ body::before{
 .view.on{display:flex}
 @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 /* ===== 首页 ===== */
-.cover{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:14px 0 6px;gap:22px}
-.hex-stage{position:relative;display:flex;flex-direction:column;align-items:center;gap:14px;width:100%}
+.cover{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px 0 4px;gap:16px}
+.hex-stage{position:relative;display:flex;flex-direction:column;align-items:center;gap:10px;width:100%}
 .hex-img{height:auto;display:flex;justify-content:center;transition:opacity .18s ease,filter .18s ease}
 .hex-img.rolling{opacity:.72;filter:blur(.4px)}
 .hexsvg{display:block;fill:var(--ink)}
@@ -116,8 +116,10 @@ body::before{
 .fig-frame.empty::after{content:"人间道图 · 图位待置";font-family:"Kaiti SC","STKaiti","KaiTi",serif;font-size:13px;letter-spacing:.16em;color:var(--ink-3)}
 .fig-frame .seal{position:absolute;right:14px;bottom:12px;width:40px;height:40px;border:1px solid rgba(164,57,42,.55);color:var(--cinnabar);font-family:"Kaiti SC","Kaiti","KaiTi",serif;font-size:10px;line-height:1.1;display:flex;align-items:center;justify-content:center;text-align:center;letter-spacing:.02em;opacity:.85;background:rgba(239,232,218,.35)}
 .renjiandao figcaption{font-family:"Kaiti SC","STKaiti","KaiTi",serif;font-size:12.5px;letter-spacing:.1em;color:var(--ink-3);text-align:center}
+#homeFig{max-width:172px}
+#homeFig img{max-height:190px;width:auto;max-width:100%;margin:0 auto}
 /* ===== 按钮 ===== */
-.pads{display:flex;flex-direction:column;align-items:center;gap:10px;padding:18px 0 8px}
+.pads{display:flex;flex-direction:column;align-items:center;gap:8px;padding:12px 0 6px}
 .pad-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;width:min(100%,400px)}
 .btn{
   appearance:none;cursor:pointer;
@@ -241,12 +243,12 @@ body::before{
   .stage{padding:26px 40px 48px}
   .brand{font-size:23px;padding:5px 11px 5px 13px}
   .slogan{font-size:16.5px;margin-top:10px}
-  .cover{gap:28px;padding:26px 0 10px}
-  .hex-title h1{font-size:38px}
+  .cover{gap:18px;padding:14px 0 6px}
+  .hex-title h1{font-size:33px}
   .hex-title p{font-size:12.5px}
   .pad-row{width:min(100%,470px);gap:12px}
   .btn{font-size:15.5px;padding:12px 6px}
-  .pads{padding:26px 0 12px}
+  .pads{padding:14px 0 8px}
   .gua-grid{grid-template-columns:repeat(8,minmax(0,1fr));gap:10px}
   .cell{min-height:104px}
   .full-body{flex-direction:row;align-items:flex-start;gap:34px}
@@ -256,6 +258,8 @@ body::before{
   .full-col summary::after{content:none}
   .tu-body{gap:24px}
   .page-head h2{font-size:23px}
+  #homeFig{max-width:160px}
+  #homeFig img{max-height:180px}
 }
 @media (min-width:1100px){
   .hex-title h1{font-size:42px}
@@ -272,13 +276,14 @@ body::before{
 @media (max-width:768px){
   .fig-frame img{width:auto;max-width:100%;max-height:56vh;margin:0 auto}
   .fig-frame{max-width:min(100%,420px)}
+  #homeFig img{max-height:190px}
 }
-.hex-img .hexsvg{width:min(60vw,200px);height:auto}
+.hex-img .hexsvg{width:min(54vw,170px);height:auto}
 .tu-hex .hexsvg{width:min(54vw,180px);height:auto}
 .full-left .hexsvg{width:min(56vw,170px);height:auto}
 .cell .hexsvg{width:46px;height:auto}
 @media (min-width:768px){
-  .hex-img .hexsvg{width:230px}
+  .hex-img .hexsvg{width:160px}
   .tu-hex .hexsvg{width:200px}
   .full-left .hexsvg{width:186px}
   .cell .hexsvg{width:52px}
